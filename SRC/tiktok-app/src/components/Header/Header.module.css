@@ -1,0 +1,116 @@
+.container {
+    position: sticky;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    box-shadow: 0px 1px 1px rgb(0 0 0 / 12%);
+    background-color: #fff;
+}
+
+.wrapper {
+    width: 100%;
+    max-width: 1150px;
+    padding: 0 24px 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    width: 120px;
+}
+
+.search-container {
+    width: 360px;
+}
+
+.account-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.account-item {
+    position: relative;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+}
+
+.account-item svg {
+    font-size: 32px;
+}
+
+.account-item img {
+    border-radius: 50%;
+}
+
+.upload-link {
+    font-weight: bold;
+}
+
+.upload-link:hover {
+    text-decoration: underline;
+}
+
+.upload-tooltip, .notification-tooltip {
+    position: absolute;
+    z-index: 1;
+    margin-top: 10px;
+    padding: 6px 0;
+    text-align: center;
+    background-color: #666666;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    display: none;
+}
+
+.upload-tooltip {
+    left: -40px;
+    top: 100%;
+    right: -40px;
+}
+
+.notification-tooltip {
+    left: -30px;
+    top: 100%;
+    right: -30px;
+}
+
+.upload-tooltip::before {
+    content: 'Tải video lên';
+}
+
+.notification-tooltip::before {
+    content: 'Thông báo';
+}
+
+.upload-tooltip::after,
+.notification-tooltip::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    margin: 0 auto;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #666666;
+}
+
+.account-item:hover :nth-child(2) {
+    display: block;
+}
+
+.account-item[show-tooltip="true"]:hover :nth-child(2) {
+    display: none;
+}

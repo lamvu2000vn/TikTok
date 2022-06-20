@@ -1,0 +1,117 @@
+.container {
+    position: relative;
+    flex: 1 1 896px;
+    background: rgb(94, 94, 94);
+    overflow: hidden;
+    padding: 0 80px;
+}
+
+.blur-background {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .5;
+    background: rgb(63,94,251);
+    background: linear-gradient(90deg, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+}
+
+.video-wrapper {
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.video-control-container {
+    cursor: initial;
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    z-index: 1;
+    transform: translateX(-50%);
+    width: calc(100% - 160px);
+    max-width: 56.25vh;
+    height: 24px;
+    padding-inline: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+}
+
+.play-button-wrapper {
+    cursor: pointer;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    color: #fff;
+}
+
+.play-button-wrapper svg {
+    font-size: 70px;
+}
+
+.close-btn {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    background-color: var(--gray-4);
+}
+
+.close-btn svg {
+    width: 40px;
+    height: 40px;
+    color: #fff;
+}
+
+.tiktok-icon {
+    position: absolute;
+    left: 84px;
+    top: 20px;
+    z-index: 1;
+}
+
+.tiktok-icon svg {
+    border-radius: 50%;
+}
+
+.volume-control-container {
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1;
+}
+
+.prev-btn-container {
+    position: absolute;
+    top: calc(50% - 48px);
+    right: 20px;
+    z-index: 1;
+}
+
+.next-btn-container {
+    position: absolute;
+    top: calc(50% + 8px);
+    right: 20px;
+    z-index: 1;
+}
+
+.report-btn-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1;
+}

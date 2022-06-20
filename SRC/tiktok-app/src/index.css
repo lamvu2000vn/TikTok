@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --main: rgb(254, 44, 85);
+    --secondary: #20d5ec;
+    --text: rgb(22, 24, 35);
+    --gray-text: rgba(22, 24, 35, 0.75);
+    --gray: rgba(22, 24, 35, 0.03);
+    --gray-1: rgba(22, 24, 35, 0.06);
+    --gray-2: rgba(22, 24, 35, .1);
+    --gray-3: rgba(22, 24, 35, .2);
+    --gray-4: rgba(22, 24, 35, .3);
+    --gray-5: rgba(22, 24, 35, .5);
+    --gray-6: rgba(22, 24, 35, .7);
+}
+
+::-webkit-scrollbar-track {
+	border-radius: 999px;
+	background-color: #ececec;
+}
+
+::-webkit-scrollbar {
+	width: 7px;
+	background-color: #ececec;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 999px;
+	background-color: rgba(0, 0, 0, .2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "IBM Plex Sans", ProximaNova, Arial, Tahoma, PingFangSC, sans-serif;
+    color: var(--text);
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+.link {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--main);
+}
+
+.link:hover {
+    text-decoration: underline;
+}

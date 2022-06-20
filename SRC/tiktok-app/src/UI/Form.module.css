@@ -1,0 +1,32 @@
+.form-group {
+    position: relative;
+}
+
+.label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.input {
+    padding: 12px 16px;
+    background-color: var(--gray-1);
+    border: 1px solid var(--gray-1);
+    outline: none;
+    border-radius: 4px;
+    caret-color: var(--main);
+    width: 100%;
+}
+
+.input::placeholder {
+    color: var(--gray-5);
+    opacity: 1;
+}
+
+.input:focus {
+    box-shadow: 0 0 0 1px var(--gray-3);
+}
+
+.input:hover {
+    background-color: var(--gray-2);
+}

@@ -1,0 +1,87 @@
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.seekbar-container,
+.seekbar-container-lg {
+    position: relative;
+    height: 2px;
+    background-color: #ccc;
+    flex: 1;
+}
+.seekbar-container:hover {
+    height: 4px;
+}
+
+.seekbar-container-lg {
+    height: 4px;
+}
+
+.seekbar-container-lg:hover {
+    height: 6px;
+}
+
+.seekbar-container:hover .seekbar-input::-webkit-slider-thumb {
+    display: block;
+}
+
+.seekbar-container-lg:hover .seekbar-input-lg::-webkit-slider-thumb {
+    display: block;
+}
+
+.seekbar-input,
+.seekbar-input-lg {
+    cursor: pointer;
+    pointer-events: auto;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+}
+
+.seekbar-input::-webkit-slider-thumb,
+.seekbar-input-lg::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    display: none;
+}
+
+.seekbar-input-lg::-webkit-slider-thumb {
+    height: 16px;
+    width: 16px;
+}
+
+.procress-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background-color: #fff;
+}
+
+.seekbar-time-container,
+.seekbar-time-container-lg {
+    flex: 0;
+    line-height: 16px;
+    font-size: 10px;
+    color: #fff;
+    text-align: end;
+    white-space: nowrap;
+}
+
+.seekbar-time-container-lg {
+    font-size: 14px;
+}

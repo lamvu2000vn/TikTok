@@ -1,0 +1,29 @@
+.button {
+    cursor: pointer;
+    position: fixed;
+    right: 24px;
+    bottom: 0;
+    z-index: 1;
+    width: 32px;
+    height: 32px;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--main);
+    transform: translateY(100%);
+    transition: all .3s;
+}
+
+.button svg {
+    width: 28px;
+    height: 28px;
+    color: #fff;
+}
+
+.show {
+    transform: translateY(0);
+    margin-bottom: 8px;
+}

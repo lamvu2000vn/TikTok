@@ -1,0 +1,33 @@
+.container {
+    cursor: auto;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 1;
+    width: 320px;
+}
+
+.wrapper {
+    padding: 20px;
+}
+
+.popover-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.follow-btn-wrapper {
+    min-width: 106px;
+}
+
+.popover-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.popover-footer {
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-2);
+}

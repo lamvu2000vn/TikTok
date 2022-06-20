@@ -1,0 +1,11 @@
+.container {
+    width: 100%;
+    padding: 24px 32px;
+    box-sizing: border-box;
+    background-color: #f8f8f8;
+    border-top: 1px solid var(--gray-2);
+    border-bottom: 1px solid var(--gray-2);
+    overflow: hidden auto;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+}

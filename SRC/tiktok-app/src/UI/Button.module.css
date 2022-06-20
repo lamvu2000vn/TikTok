@@ -1,0 +1,36 @@
+.button, .outline {
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background-color: var(--main);
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button:hover {
+    filter: brightness(90%);
+}
+
+.outline {
+    border: 1px solid var(--main);
+    background-color: #fff;
+    color: var(--main);
+}
+
+.outline:hover {
+    background-color: var(--main);
+    color: #fff;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    background-color: var(--gray-1);
+    color: var(--gray-4);
+}

@@ -1,0 +1,67 @@
+.wrapper {
+    position: relative;
+    padding: 40px 32px 32px;
+    width: 400px;
+    height: 280px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.content {
+    width: 100%;
+    border-top: 1px solid var(--gray-2);
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    border-bottom: 1px solid var(--gray-2);
+}
+
+.arrow-up-icon,
+.arrow-down-icon,
+.like-icon,
+.mute-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--text);
+    border-radius: 4px;
+    background-color: #fff;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow-up-icon::before {
+    content: '';
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    border-bottom: 10px solid var(--text);
+    display: block;
+}
+
+.arrow-down-icon::before {
+    content: '';
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    border-top: 10px solid var(--text);
+    display: block;
+}
+
+.like-icon::before {
+    content: 'L';
+}
+.mute-icon::before {
+    content: 'M';
+}

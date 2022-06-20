@@ -1,0 +1,40 @@
+.user-link-wrapper {
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all .2s;
+}
+
+.user-link-wrapper:hover {
+    background-color: var(--gray);
+}
+
+.user-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 32px;
+}
+
+.user-id {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-id h4 {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 22px;
+    margin-top: -2px;
+}
+
+.user-name {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 15px;
+    color: var(--gray-5);
+}
