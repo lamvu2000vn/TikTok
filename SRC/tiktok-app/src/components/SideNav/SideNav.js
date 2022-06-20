@@ -19,7 +19,7 @@ import { RiLiveLine } from 'react-icons/ri'
 // Style
 import styles from './SideNav.module.css'
 
-const SideNav = () => {
+const SideNav = ({ width = 356 }) => {
     const [showAuthModal, setShowAuthModal] = useState(false)
 
     const {isLogin} = useSelector(state => state.auth)
@@ -30,10 +30,19 @@ const SideNav = () => {
 
     const handleActiveNavLink = isActive => (isActive ? styles['main-nav-link-active'] : styles['main-nav-link'])
 
+    const styledContainer = {
+        width,
+        flex: `0 0 ${width}px`
+    }
+
+    const styledWrapper = {
+        width
+    }
+
     return (
-        <div className={styles.container}>
-            <div className={styles['scroll']}>
-                <div className={styles['sidenav-wrapper']}>
+        <div className={styles.container} style={styledContainer}>
+            <div className={styles['scroll']} style={styledWrapper}>
+                <div className={styles['sidenav-wrapper']} style={styledWrapper}>
                     {/* nav */}
                     <div className={styles['main-nav-container']}>
                         <NavLink to="/" className={({ isActive }) => handleActiveNavLink(isActive)}>

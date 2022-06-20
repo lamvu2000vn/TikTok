@@ -1,0 +1,13 @@
+.container {
+    position: relative;
+    flex: 0 0 auto;
+    margin-bottom: 20px;
+    max-width: 624px;
+    padding-right: 92px;
+}
+
+.follow-button-wrapper {
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+}

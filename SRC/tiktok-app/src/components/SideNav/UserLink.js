@@ -4,13 +4,16 @@ import { Link } from 'react-router-dom'
 // Components
 import { UserInfoWrapper, UserAvatar, Nickname } from '../User'
 
+// Function
+import { storeUserInSession } from '../../common/functions'
+
 // Style
 import styles from './UserLink.module.css'
 
 const UserLink = ({ user, showPopover }) => {       
     return (
         <UserInfoWrapper user={user} showPopover={showPopover}>
-            <Link to={`/@${user.nickname}`} className={styles['user-link-wrapper']}>
+            <Link to={`/@${user.nickname}`} className={styles['user-link-wrapper']} onClick={() => storeUserInSession(user)}>
                 <UserAvatar filename={user.avatar} size={32} />
                 <div className={styles['user-info-wrapper']}>
                     <div style={{marginTop: '-2px'}}>

@@ -15,7 +15,7 @@ import Button from './Button'
 import { AuthModal } from '../components/Modal'
 import FollowingButton from './FollowingButton'
 
-const FollowButton = ({ user }) => {
+const FollowButton = ({ user, outline = true }) => {
     const dispatch = useDispatch()
     const [showAuthModal, setShowAuthModal] = useState(false)
 
@@ -45,11 +45,11 @@ const FollowButton = ({ user }) => {
             user && user.isFollowing ? (
                 <FollowingButton user={user} />
             ) : (
-                <Button outline onClick={handleFolowUser}>Follow</Button>
+                <Button outline={outline} onClick={handleFolowUser}>Follow</Button>
             )
         ) : (
             <>
-                <Button outline onClick={handleFolowUser}>Follow</Button>
+                <Button outline={outline} onClick={handleFolowUser}>Follow</Button>
                 <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} />
             </>
         )
