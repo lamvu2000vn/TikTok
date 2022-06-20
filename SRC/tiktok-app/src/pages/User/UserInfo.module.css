@@ -11,3 +11,32 @@
     flex: 1;
     align-items: flex-end;
 }
+
+.count-info-container {
+    display: flex;
+    align-items: center;
+    margin-top: 22px;
+    gap: 20px;
+}
+
+.number-wrapper {
+    display: flex;
+    align-items: flex-end;
+    font-size: 18px;
+    line-height: 25px;
+}
+
+.span-unit {
+    font-weight: 400;
+    font-size: 16px;
+    margin-left: 6px;
+}
+
+.description-container {
+    text-align: left;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    white-space: pre-line;
+    margin-top: 10px;
+}

@@ -1,3 +1,6 @@
+// Library
+import { memo } from 'react'
+
 // Component
 import Header from '../../components/Header/Header'
 import SideNav from '../../components/SideNav/SideNav'
@@ -22,4 +25,4 @@ const UserPage = () => {
     )
 }
 
-export default UserPage
+export default memo(UserPage)

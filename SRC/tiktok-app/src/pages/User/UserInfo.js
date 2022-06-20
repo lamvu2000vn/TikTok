@@ -1,12 +1,12 @@
 // Library
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 
 // Component
 import { UserAvatar, Nickname } from '../../components/User'
 import { Loading, FollowButton } from '../../UI'
 
 // Function
-import { getUserFromSession } from '../../common/functions'
+import { shortenTheNumber, getUserFromSession } from '../../common/functions'
  
 // Style
 import styles from './UserInfo.module.css'
@@ -24,7 +24,7 @@ const UserInfo = () => {
                 <div className="flex items-stretch justify-center gap-5">
                     <UserAvatar filename={user.avatar} size={116} />
                     <div className="flex flex-col flex-1 cursor-pointer overflow-hidden">
-                        <div className="flex items-center h-9 mb-1">
+                        <div className="flex items-center leading-9 mb-1">
                             <Nickname nickname={user.nickname} verified={user.verified} fz={32} />
                         </div>
                         <div className="font-semibold text-lg h-6">{user.name}</div>
@@ -35,6 +35,21 @@ const UserInfo = () => {
                         </div>
                     </div>
                 </div>
+                <div className={styles['count-info-container']}>
+                    <div className={styles['number-wrapper']}>
+                        <strong>0</strong>
+                        <span className={styles['span-unit']}>Đang Follow</span>
+                    </div>
+                    <div className={styles['number-wrapper']}>
+                        <strong>{shortenTheNumber(user.followers)}</strong>
+                        <span className={styles['span-unit']}>Follower</span>
+                    </div>
+                    <div className={styles['number-wrapper']}>
+                        <strong>{shortenTheNumber(user.likes)}</strong>
+                        <span className={styles['span-unit']}>Thích</span>
+                    </div>
+                </div>
+                <div className={styles['description-container']}></div>
             </div>
         ) : (
             <Loading />
@@ -42,4 +57,4 @@ const UserInfo = () => {
     )
 }
 
-export default UserInfo
+export default memo(UserInfo)
