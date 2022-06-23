@@ -1,9 +1,14 @@
+// Library
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Transition } from 'react-transition-group'
+import { useSelector } from 'react-redux'
+
+// Component
 import Card from './Card'
 import { IoClose } from 'react-icons/io5'
 
+// Style
 import styles from './Modal.module.css'
 
 export const CloseModalButton = ({ onClose, size = 'lg' }) => {
@@ -86,14 +91,18 @@ const Overlay = ({ children, show }) => {
 const Container = document.getElementById('overlays')
 
 const Modal = ({ children, show, onClose }) => {
+    const {showVideoDetails} = useSelector(state => state.videoDetails)
+
     useEffect(() => {
         if (show) {
             document.body.style.overflow = 'hidden'
             document.body.style.marginRight = '7px';
         } else {
-            document.body.removeAttribute('style')
+            if (showVideoDetails === false) {
+                document.body.removeAttribute('style')
+            }
         }
-    }, [show])
+    }, [show, showVideoDetails])
 
     return (
         <>

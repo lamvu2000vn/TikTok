@@ -10,14 +10,17 @@ import { HOST } from '../../../API'
 import { uiSliceActions } from '../../../store/slices/uiSlice'
 
 // Function
-import { shortenTheNumber } from '../../../common/functions'
+import { shortenTheNumber, convertToFriendlyTime } from '../../../common/functions'
 
 // Component
+import { FollowButton, Toast } from '../../../UI'
 import { UserAvatar, Nickname, UserInfoWrapper } from '../../User'
-import { Button, Toast } from '../../../UI'
 import { LikeIcon, CommentIcon } from '../../Icons'
 import CommentsList from './CommentsList'
 import BottomComment from './BottomComment'
+
+// Icon
+import { BsDot } from 'react-icons/bs'
 
 // Style
 import styles from './Content.module.css'
@@ -51,13 +54,13 @@ const Content = () => {
                         <Nickname nickname={user.nickname} verified={user.verified} link />
                         <div className={styles['orther-info-container']}>
                             <Link to={`/@${user.nickname}`}>{user.name}</Link>
-                            <span style={{margin: '0px 4px'}}>.</span>
-                            <span>2 ngày trước</span>
+                            <BsDot />
+                            <span>{convertToFriendlyTime(item.post_date)}</span>
                         </div>
                     </UserInfoWrapper>
                 </div>
                 <div className={styles['follow-btn-container']}>
-                    <Button outline>Follow</Button>
+                    <FollowButton />
                 </div>
             </div>
             <div className={styles['main-content-container']}>

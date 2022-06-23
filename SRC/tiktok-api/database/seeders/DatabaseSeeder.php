@@ -17,25 +17,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $comments = [];
-        // for ($i = 0; $i < 1000; $i++) {
-        //     $comments[] = [
-        //         'user_id' => mt_rand(2, 51),
-        //         'video_id' => 1,
-        //         'content' => Str::random(100),
-        //         'post_date' => date('Y-m-d H:i:s')
-        //     ];
-        // }
-        // DB::table('comments')->insert($comments);
+        $comments = [];
+        for ($i = 0; $i < 1000; $i++) {
+            $comments[] = [
+                'user_id' => mt_rand(2, 51),
+                'video_id' => 1,
+                'content' => Str::random(100),
+                'post_date' => date('Y-m-d H:i:s')
+            ];
+        }
+        DB::table('comments')->insert($comments);
 
-        // $commentLikes = [];
-        // for ($i = 0; $i < 1000; $i++) {
-        //     $commentLikes[] = [
-        //         'user_id' => mt_rand(2, 51),
-        //         'comment_id' => mt_rand(1, 1000)
-        //     ];
-        // }
-        // DB::table('comments_liked')->insert($commentLikes);
+        $commentLikes = [];
+        for ($i = 0; $i < 1000; $i++) {
+            $commentLikes[] = [
+                'user_id' => mt_rand(2, 51),
+                'comment_id' => mt_rand(1, 1000)
+            ];
+        }
+        DB::table('comments_liked')->insert($commentLikes);
 
         // DB::table('comments')->insert($comments);
         // \App\Models\User::factory(10)->create();

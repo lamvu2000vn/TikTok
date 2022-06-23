@@ -6,6 +6,7 @@ import axios from 'axios'
 import { VIDEO } from '../../../API'
 
 // Component
+import { Loading } from '../../../UI'
 import CommentItem from './CommentItem'
 
 // Style
@@ -28,13 +29,17 @@ const CommentsList = ({ videoId }) => {
         })
     }, [videoId])
 
-    const commentItems = commentsList.map(comment => (
-        <CommentItem key={comment.id} comment={comment} />
-    ))
-
     return (
         <div className={styles.container}>
-            {commentItems}
+            {
+                commentsList.length ? (
+                    commentsList.map(comment => (
+                        <CommentItem key={comment.id} comment={comment} />
+                    ))
+                ) : (
+                    <Loading />
+                )
+            }
         </div>
     )
 }

@@ -1,6 +1,9 @@
 // Component
 import { UserAvatar, Nickname, UserInfoWrapper } from '../../User'
 
+// Function
+import { convertToFriendlyTime } from '../../../common/functions'
+
 // Icon
 import { BiHeart } from 'react-icons/bi'
 
@@ -24,7 +27,7 @@ const CommentItem = ({ comment }) => {
                     </UserInfoWrapper>
                     <div className={styles['comment-text']}>{comment.content}</div>
                     <div className={styles['sub-content-container']}>
-                        <span>{comment.post_date}</span>
+                        <span>{convertToFriendlyTime(comment.post_date)}</span>
                         <span className={styles['reply-button']}>Trả lời</span>
                     </div>
                 </div>

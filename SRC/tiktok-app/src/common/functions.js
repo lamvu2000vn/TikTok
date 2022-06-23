@@ -42,8 +42,30 @@ export const displayVideoTime = time => {
     }
 }
 
-export const convertToLocalTime = datetimeString => {
-    
+export const convertToFriendlyTime = datetimeString => {
+    const timestamp = new Date(datetimeString).getTime() 
+    const seconds = Math.floor((Date.now() - timestamp) / 1000)
+
+    // Seconds
+    if (seconds <= 60) {
+        return 'Vừa xong'
+    }
+    // Minutes
+    else if (seconds > 60 && seconds <= 3600 ) {
+        return `${Math.floor(seconds / 60)} phút trước`
+    }
+    // Hours
+    else if (seconds > 3600 && seconds <= 86400) {
+        return `${Math.floor(seconds / 3600)} giờ trước`
+    }
+    // Days
+    else if (seconds > 86400 && seconds <= 345600) {
+        return `${Math.floor(seconds / 86400)} ngày trước`
+    }
+    // Date
+    else {
+        return datetimeString.split(' ')[0].split('-').reverse().join('/')
+    }
 }
 
 export const likeVideo = video_id => axios(LIKE_VIDEO + '/' + video_id)

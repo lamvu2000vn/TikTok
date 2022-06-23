@@ -1,5 +1,5 @@
 // Library
-import { useState, useEffect, memo } from 'react'
+import { memo } from 'react'
 
 // Component
 import { UserAvatar, Nickname } from '../../components/User'
