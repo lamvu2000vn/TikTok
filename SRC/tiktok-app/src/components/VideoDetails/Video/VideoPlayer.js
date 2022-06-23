@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback, useState, memo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 // Action
-import { videosFeedActions } from '../../../store/slices/videosFeedSlice'
+import { videoDetailsActions } from '../../../store/slices/videoDetailsSlice'
 
 // Component
 import Video from '../../VideosFeed/VideoPlayer'
@@ -29,18 +29,18 @@ const VideoPlayer = () => {
     const videoRef = useRef()
     const seekbarRef = useRef()
 
-    const videosFeed = useSelector(state => state.videosFeed)
-
-    const {watchingIndex, videoState, itemsList} = videosFeed
+    const {watchingIndex, videosList} = useSelector(state => state.videoDetails)
+    const video = videosList[watchingIndex]
+    
+    const {videoState} = useSelector(state => state.videosFeed)
     const {volume, currentTime} = videoState
-    const video = itemsList[watchingIndex]
 
     const handlePlayOrPause = useCallback(() => {
         setIsPause(prevState => !prevState)
     }, [])
 
     const handleCloseVideoDetails = () => {
-        dispatch(videosFeedActions.closeVideoDetails({
+        dispatch(videoDetailsActions.closeVideoDetails({
             currentTime: videoRef.current.currentTime
         }))
     }
@@ -70,10 +70,10 @@ const VideoPlayer = () => {
         videoRef.current.play()
 
         // Fetch more videos
-        if (watchingIndex === itemsList.length - 1) {
-            dispatch(videosFeedActions.addVideos())
+        if (watchingIndex === videosList.length - 1) {
+            
         }
-    }, [dispatch, itemsList.length, watchingIndex])
+    }, [dispatch, videosList.length, watchingIndex])
 
     return (
         <div className={styles.container}>
@@ -102,7 +102,7 @@ const VideoPlayer = () => {
                 {watchingIndex !== 0 && <PrevButton />}
             </div>
             <div className={styles['next-btn-container']}>
-                {(watchingIndex !== itemsList.length - 1) && <NextButton />}
+                {(watchingIndex !== videosList.length - 1) && <NextButton />}
             </div>
             {/* Report button */}
             <div className={styles['report-btn-container']}>

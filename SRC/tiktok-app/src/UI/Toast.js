@@ -18,7 +18,7 @@ const Toast = ({ show }) => {
         if (toast.isShow === true) {
             setTimeout(() => {
                 dispatch(uiSliceActions.closeToast())
-            }, 5000)
+            }, 3000)
         }
     }, [dispatch, toast.isShow])
 

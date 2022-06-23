@@ -41,6 +41,20 @@ class Video extends Model
     }
 
     // Functions
+    public static function getVideoInfo($video)
+    {
+        $video->likes = DB::table('videos_liked')->where('video_id', $video->id)->count();
+        $comments = $video->comments;
+
+        if ($comments) {
+            foreach ($video->comments as $comment) {
+                $comment->likes = DB::table('comments_liked')->where('comment_id', $comment->id)->count();
+                $comment->isLiked = User::checkLikedComment($comment->id);
+            }
+        }
+
+        return $video;
+    }
     public static function getNumberOfComments($video_id)
     {
         return DB::table('comments')->where('video_id', $video_id)->count();

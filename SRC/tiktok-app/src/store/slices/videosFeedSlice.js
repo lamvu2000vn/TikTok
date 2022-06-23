@@ -7,9 +7,7 @@ const initialState = {
         prevVolume: 1,
         currentTime: 0
     },
-    showVideoDetails: false,
     showVolumeSlider: false,
-    watchingIndex: null,
     itemsList: []
 }
 
@@ -41,31 +39,14 @@ const videosFeedSlice = createSlice({
                 state.videoState.volume = state.videoState.prevVolume
             }
         },
-        showVideoDetails(state, action) {
-            state.showVideoDetails = true
-            state.watchingIndex = action.payload.itemIndex
-            state.videoState.currentTime = action.payload.currentTime
-        },
         seekVideoIsWatching(state, action) {
             state.videoState.currentTime = action.payload
-        },
-        closeVideoDetails(state, action) {
-            state.showVideoDetails = false
-            state.videoState.currentTime = action.payload.currentTime
         },
         showVolumeSlider(state) {
             state.showVolumeSlider = true
         },
         hideVolumeSlider(state) {
             state.showVolumeSlider = false
-        },
-        switchToPrevVideo(state) {
-            state.watchingIndex--
-            state.videoState.currentTime = 0
-        },
-        switchToNextVideo(state) {
-            state.watchingIndex++
-            state.videoState.currentTime = 0
         },
         followUser(state, action) {
             const user = action.payload

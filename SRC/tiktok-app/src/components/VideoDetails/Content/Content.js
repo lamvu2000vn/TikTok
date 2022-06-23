@@ -1,11 +1,20 @@
 // Library
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
 
+// API
+import { HOST } from '../../../API'
+
+// Action
+import { uiSliceActions } from '../../../store/slices/uiSlice'
+
+// Function
+import { shortenTheNumber } from '../../../common/functions'
+
 // Component
 import { UserAvatar, Nickname, UserInfoWrapper } from '../../User'
-import { Button } from '../../../UI'
+import { Button, Toast } from '../../../UI'
 import { LikeIcon, CommentIcon } from '../../Icons'
 import CommentsList from './CommentsList'
 import BottomComment from './BottomComment'
@@ -14,9 +23,20 @@ import BottomComment from './BottomComment'
 import styles from './Content.module.css'
 
 const Content = () => {
-    const videosFeed = useSelector(state => state.videosFeed)
-    const item = videosFeed.itemsList[videosFeed.watchingIndex]
+    const dispatch = useDispatch()
+
+    const {watchingIndex, videosList} = useSelector(state => state.videoDetails)
+    const item = videosList[watchingIndex]
     const {user} = item
+
+    const {toast} = useSelector(state => state.ui)
+
+    const videoUrl = `${HOST}/@${user.nickname}/video/${item.id}`
+
+    const handleCopyVideoLink = () => {
+        navigator.clipboard.writeText(videoUrl)
+        dispatch(uiSliceActions.showToast('Đã sao chép'))
+    }
 
     return (
         <div className={styles.container}>
@@ -47,22 +67,23 @@ const Content = () => {
                         <div className="flex gap-5">
                             <button className="flex items-center gap-2">
                                 <LikeIcon size={32} />
-                                <b className="text-xs">200k</b>
+                                <b className="text-xs">{shortenTheNumber(item.likes)}</b>
                             </button>
                             <button className="flex items-center gap-2">
                                 <CommentIcon size={32} />
-                                <b className="text-xs">200k</b>
+                                <b className="text-xs">{shortenTheNumber(item.comments)}</b>
                             </button>
                         </div>
                     </div>
                     <div className={styles['copy-link-container']}>
-                        <div className={styles['copy-link-text']}>https://www.tiktok.com/@bepsinhvien/video/7087235100957592858?is_copy_url=1&is_from_webapp=v1</div>
-                        <button className={styles['copy-link-button']}>Sao chép liên kết</button>
+                        <div className={styles['copy-link-text']}>{videoUrl}</div>
+                        <button className={styles['copy-link-button']} onClick={handleCopyVideoLink}>Sao chép liên kết</button>
                     </div>
                 </div>
             </div>
-            <CommentsList />
+            <CommentsList videoId={item.id} />
             <BottomComment />
+            <Toast show={toast.isShow} />
         </div>
     )
 }

@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\VideoController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\AuthController;
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,10 +29,15 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::get('/check-login', [AuthController::class, 'checkLogin']);
 
-Route::get('/recommended-users', [UserController::class, 'recommendedUsers']);
-Route::post('/following-users', [UserController::class, 'followingUsers']);
+Route::get('/recommended-users', [UserController::class, 'getRecommendedUsers']);
+Route::post('/following-users', [UserController::class, 'getFollowingUsers']);
 Route::get('/stream-video/{filename}', [VideoController::class, 'streamVideo']);
 Route::get('/follow-user/{id}', [UserController::class, 'followUser']);
+Route::get('/user/{nickname}', [UserController::class, 'getUserByNickname']);
+Route::post('/user/{id}/videos', [UserController::class, 'getVideosOfuser']);
+
+Route::post('/video/{id}/comments', [VideoController::class, 'getCommentsOfVideo']);
 
 // Page
 Route::post('/for-you', [VideoController::class, 'forYouPage']);
+Route::post('/following', [VideoController::class, 'followingPage']);

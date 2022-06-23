@@ -1,9 +1,8 @@
 // Library
 import { useDispatch } from 'react-redux'
-import { memo } from 'react'
 
 // Action
-import { videosFeedActions } from '../../../store/slices/videosFeedSlice'
+import { videoDetailsActions } from '../../../store/slices/videoDetailsSlice'
 
 // Icon
 import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io'
@@ -15,7 +14,7 @@ export const PrevButton = () => {
     const dispatch = useDispatch()
 
     const handleSwitchVideo = () => {
-        dispatch(videosFeedActions.switchToPrevVideo())
+        dispatch(videoDetailsActions.switchToPrevVideo())
     }
     
     return (
@@ -29,7 +28,7 @@ export const NextButton = () => {
     const dispatch = useDispatch()
 
     const handleSwitchVideo = () => {
-        dispatch(videosFeedActions.switchToNextVideo())
+        dispatch(videoDetailsActions.switchToNextVideo())
     }
 
     return (

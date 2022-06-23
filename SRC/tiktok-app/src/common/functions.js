@@ -42,10 +42,8 @@ export const displayVideoTime = time => {
     }
 }
 
-export const likeVideo = video_id => axios(LIKE_VIDEO + '/' + video_id)
-
-export const storeUserInSession = user => {
-    sessionStorage.setItem('user', JSON.stringify(user))
+export const convertToLocalTime = datetimeString => {
+    
 }
 
-export const getUserFromSession = () => JSON.parse(sessionStorage.getItem('user'))
+export const likeVideo = video_id => axios(LIKE_VIDEO + '/' + video_id)

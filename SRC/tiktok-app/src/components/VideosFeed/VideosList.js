@@ -1,6 +1,6 @@
 // Library
 import { useSelector } from 'react-redux'
-import { memo } from 'react'
+import { memo, useEffect, useState } from 'react'
 
 // Component
 import { Loading } from '../../UI'
@@ -11,10 +11,35 @@ import VideoDetails from '../VideoDetails/VideoDetails'
 import styles from './VideosList.module.css'
 
 const VideosList = () => {
-    const {showVideoDetails, itemsList} = useSelector(state => state.videosFeed)
+    const {itemsList} = useSelector(state => state.videosFeed)
+    const {showVideoDetails} = useSelector(state => state.videoDetails)
+
+    const [scrollY, setScrollY] = useState(0)
+
+    // Handle scroll
+    useEffect(() => {
+        const handleVideosFeedScroll = () => {
+            const scrollY = window.scrollY
+            setScrollY(scrollY)
+        }
+
+        window.addEventListener('scroll', handleVideosFeedScroll)
+
+        return () => {
+            window.removeEventListener('scroll', handleVideosFeedScroll)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (showVideoDetails === true) {
+            document.body.style.overflowY = 'hidden'
+        } else {
+            document.body.removeAttribute('style')
+        }
+    }, [showVideoDetails])
 
     const videosList = itemsList.map((item, key) => (
-        <VideosFeedItem key={key} item={item} itemIndex={key} />
+        <VideosFeedItem key={key} item={item} itemIndex={key} scrollY={scrollY} />
     ))
 
     return (

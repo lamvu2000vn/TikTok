@@ -19,5 +19,12 @@ export const FOLLOWING_USERS = API + '/following-users'
 export const LIKE_VIDEO = API + '/like-video'
 export const FOLLOW_USER = API + '/follow-user'
 
-// For you page
+// Page
 export const FOR_YOU_PAGE = API + '/for-you'
+export const FOLLOWING_PAGE = API + '/following'
+
+// User
+export const USER = API + '/user'
+
+// Video
+export const VIDEO = API + '/video'

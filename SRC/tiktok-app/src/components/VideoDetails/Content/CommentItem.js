@@ -14,24 +14,24 @@ const CommentItem = ({ comment }) => {
         <div className={styles.container}>
             <div className={styles['comment-content-container']}>
                 <div className="mr-3">
-                    <UserInfoWrapper user={user}>
-                        <UserAvatar filename={user.avatar} />
+                    <UserInfoWrapper user={user} showPopover showDescription>
+                        <UserAvatar filename={user.avatar} nickname={user.nickname} />
                     </UserInfoWrapper>
                 </div>
                 <div className="flex-auto">
-                    <UserInfoWrapper user={user}>
-                        <Nickname nickname={user.nickname} verified={user.verified} />
+                    <UserInfoWrapper user={user} showPopover showDescription>
+                        <Nickname nickname={user.nickname} verified={user.verified} link />
                     </UserInfoWrapper>
                     <div className={styles['comment-text']}>{comment.content}</div>
                     <div className={styles['sub-content-container']}>
-                        <span>27/05/2022</span>
+                        <span>{comment.post_date}</span>
                         <span className={styles['reply-button']}>Trả lời</span>
                     </div>
                 </div>
                 <div className={styles['action-container']}>
                     <div className={styles['like-button-wrapper']}>
                         <BiHeart />
-                        <span className={styles['comment-count']}>10</span>
+                        <span className={styles['comment-count']}>{comment.likes}</span>
                     </div>
                 </div>
             </div>

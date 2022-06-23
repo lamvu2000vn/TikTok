@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Following;
+use App\Models\CommentLiked;
 
 class User extends Authenticatable
 {
@@ -140,6 +141,19 @@ class User extends Authenticatable
         if ($user) {
             $isFollowing = Following::where('user_id', $user->id)->where('following_id', $following_id)->first();
             return  $isFollowing ? true : false;
+        }
+
+        return false;
+    }
+
+    public static function checkLikedComment($comment_id)
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            $isLiked = CommentLiked::where('user_id', $user->id)->where('comment_id', $comment_id)->first();
+
+            return $isLiked ? true : false;
         }
 
         return false;

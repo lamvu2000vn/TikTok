@@ -15,7 +15,7 @@ class UserController extends Controller
     {
     }
 
-    public function recommendedUsers()
+    public function getRecommendedUsers()
     {
         try {
             $users = User::where('verified', 1)->limit(30)->get();
@@ -37,7 +37,7 @@ class UserController extends Controller
         }
     }
 
-    public function followingUsers(Request $request)
+    public function getFollowingUsers(Request $request)
     {
         try {
             $limit = $request->limit;
@@ -110,6 +110,49 @@ class UserController extends Controller
             return response()->json([
                 'status' => 500,
                 'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getUserByNickname($nickname)
+    {
+        try {
+            $user = User::where('nickname', $nickname)->first();
+            $user = User::getUserInfo($user);
+
+            return response()->json([
+                'status' => 200,
+                'data' => $user
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function getVideosOfuser(Request $request, $id)
+    {
+        try {
+            $limit = $request->limit;
+            $offset = $request->offset;
+            $videos = Video::where('user_id', $id)->limit($limit)->offset($offset)->orderBy('id', 'desc')->get();
+
+            foreach ($videos as $video) {
+                $user = User::find($video->user_id);
+                $video->user = User::getUserInfo($user);
+            }
+
+            return response()->json([
+                'status' => 200,
+                'data' => $videos
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage()
             ]);
         }
     }

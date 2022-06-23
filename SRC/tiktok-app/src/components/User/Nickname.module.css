@@ -1,7 +1,7 @@
 .container {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
 .container span {
@@ -9,8 +9,6 @@
     font-family: "IBM Plex Sans", SofiaPro, Arial, Tahoma, PingFangSC, sans-serif;
     font-weight: 700;
     font-size: 16px;
-    line-height: 22px;
-    max-width: 260px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

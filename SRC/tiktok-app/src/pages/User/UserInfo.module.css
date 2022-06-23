@@ -40,3 +40,22 @@
     white-space: pre-line;
     margin-top: 10px;
 }
+
+.share-button {
+    cursor: pointer;
+    position: absolute;
+    top: 11px;
+    right: 52px;
+}
+
+.more-button {
+    cursor: pointer;
+    position: absolute;
+    top: 11px;
+    right: 12px
+}
+
+.share-button svg, .more-button svg {
+    width: 24px;
+    height: 24px;
+}

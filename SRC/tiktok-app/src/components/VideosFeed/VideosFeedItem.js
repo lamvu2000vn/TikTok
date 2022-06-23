@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 // Action
-import { videosFeedActions } from '../../store/slices/videosFeedSlice'
+import { videoDetailsActions } from '../../store/slices/videoDetailsSlice'
 
 // Component
 import { FollowButton } from '../../UI'
@@ -26,10 +26,9 @@ import { FaCommentDots, FaShare } from 'react-icons/fa'
 // Style
 import styles from './VideosFeedItem.module.css'
 
-const VideosFeedItem = ({ item, itemIndex }) => {
+const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
     const dispatch = useDispatch()
     
-    const [scrollY, setScrollY] = useState(0)
     const [isPause, setIsPause] = useState(true)
     const [seekToSeconds, setSeekToSeconds] = useState(0)
     const [showAuthModal, setShowAuthModal] = useState(false)
@@ -37,10 +36,11 @@ const VideosFeedItem = ({ item, itemIndex }) => {
     
     const videoRef = useRef()
 
-    const videosFeed = useSelector(state => state.videosFeed)
-    const {showVideoDetails, watchingIndex} = videosFeed
-    const currentTime = videosFeed.videoState.currentTime
-    const volume = videosFeed.videoState.volume
+    const {showVideoDetails, watchingIndex} = useSelector(state => state.videoDetails)
+
+    const {videoState, itemsList} = useSelector(state => state.videosFeed)
+    const currentTime = videoState.currentTime
+    const volume = videoState.volume
     const video = item
     const {user} = video
 
@@ -51,16 +51,18 @@ const VideosFeedItem = ({ item, itemIndex }) => {
         setIsPause(prevState => !prevState)
     }
 
+    // Show video details
     const handleSeeVideoDetails = useCallback(() => {
+        videoRef.current.currentTime = 0
+
         setIsPause(true)
 
-        dispatch(videosFeedActions.showVideoDetails({
+        dispatch(videoDetailsActions.setVideosList(itemsList))
+        dispatch(videoDetailsActions.showVideoDetails({
             itemIndex,
             currentTime: videoRef.current.currentTime
         }))
-
-        videoRef.current.currentTime = 0
-    }, [dispatch, itemIndex])
+    }, [dispatch, itemIndex, itemsList])
 
     const handleToggleAuthModal = useCallback(() => {
         setShowAuthModal(state => !state)
@@ -82,20 +84,6 @@ const VideosFeedItem = ({ item, itemIndex }) => {
         }
     }
 
-    // Handle scroll
-    useEffect(() => {
-        const handleVideosFeedScroll = () => {
-            const scrollY = window.scrollY
-            setScrollY(scrollY)
-        }
-
-        window.addEventListener('scroll', handleVideosFeedScroll)
-
-        return () => {
-            window.removeEventListener('scroll', handleVideosFeedScroll)
-        }
-    }, [])
-
     // Play/Pause video
     useEffect(() => {
         if (isPause === true) {
@@ -113,7 +101,7 @@ const VideosFeedItem = ({ item, itemIndex }) => {
 
         if (videoRect.top >= 0 && videoRect.bottom <= viewportHeight) {
             if (showVideoDetails === false) {
-                setIsPause(true)
+                setIsPause(false)
                 setShowVideoControl(true)
             }
         } else {

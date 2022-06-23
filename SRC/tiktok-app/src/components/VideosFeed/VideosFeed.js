@@ -7,7 +7,7 @@ import axios from 'axios'
 import { videosFeedActions } from '../../store/slices/videosFeedSlice'
 
 // API
-import { FOR_YOU_PAGE } from '../../API'
+import { FOR_YOU_PAGE, FOLLOWING_PAGE } from '../../API'
 
 // Component
 import VideosList from './VideosList'
@@ -19,16 +19,7 @@ import styles from './VideosFeed.module.css'
 const VideosFeed = ({ page }) => {
     const dispatch = useDispatch()
 
-    const {showVideoDetails} = useSelector(state => state.videosFeed)
     const {isLogin} = useSelector(state => state.auth)
-
-    useEffect(() => {
-        if (showVideoDetails === true) {
-            document.body.style.overflowY = 'hidden'
-        } else {
-            document.body.removeAttribute('style')
-        }
-    }, [showVideoDetails])
 
     // fetch videos
     useEffect(() => {
@@ -36,7 +27,9 @@ const VideosFeed = ({ page }) => {
             return
         }
 
-        axios.post(FOR_YOU_PAGE, {
+        const url = page === 'for-you' ? FOR_YOU_PAGE : FOLLOWING_PAGE
+
+        axios.post(url, {
             limit: 10,
             offset: 0
         }).then(response => {
