@@ -30,9 +30,8 @@ const RecommendedUsers = () => {
         if (length === 0) {
             axios(RECOMMENDED_USERS)
                 .then(response => {
-                    if (response.data.status === 200) {
-                        const data = response.data.data
-    
+                    const {status, data} = response.data
+                    if (status === 200) {
                         dispatch(sidebarSliceActions.setRecommendedUsers(data))
                     }
                 })

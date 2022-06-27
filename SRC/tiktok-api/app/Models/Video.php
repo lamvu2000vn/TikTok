@@ -42,12 +42,11 @@ class Video extends Model
     }
 
     // Functions
-    public static function getVideoByIds($ids)
+    public static function getVideoByIds($videoIdentify)
     {
-        $stringIds = '(' . implode(', ', $ids) . ')';
         $userId = Auth::id() ?? 0;
 
-        $videos = DB::select("
+        $query = "
             SELECT
                 videos.*,
                 (SELECT COUNT(*) FROM videos_liked WHERE videos_liked.video_id = videos.id) AS video_likes,
@@ -72,8 +71,26 @@ class Video extends Model
                 (SELECT COUNT(*) FROM videos_liked WHERE videos_liked.user_id = $userId AND videos_liked.video_id = videos.id) AS is_liked
             FROM videos
             LEFT JOIN users ON videos.user_id = users.id
-            WHERE videos.id IN $stringIds
-        ");
+        ";
+
+        $type = gettype($videoIdentify);
+        $whereClause = '';
+
+        switch ($type) {
+            case 'int':
+                $whereClause = "WHERE videos.id = $videoIdentify";
+                break;
+            case 'array':
+                $stringVideoIds = '(' . implode(', ', $videoIdentify) . ')';
+                $whereClause = "WHERE videos.id IN $stringVideoIds";
+                break;
+            default:
+                return false;
+        }
+
+        $query .= $whereClause;
+
+        $videos = DB::select($query);
 
         $result = [];
         foreach ($videos as $row) {

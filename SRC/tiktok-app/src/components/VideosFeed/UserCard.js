@@ -2,9 +2,6 @@
 import { useEffect, useRef, memo } from 'react'
 import { Link } from 'react-router-dom'
 
-// API
-import { VIDEOS } from '../../API'
-
 // Component
 import { Button } from '../../UI'
 import { UserAvatar, Nickname } from '../User'

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -21,20 +22,31 @@ class AuthController extends Controller
             $phone = $request->phone;
             $password = $request->password;
 
-            if (Auth::attempt(['phone' => $phone, 'password' => $password], true)) {
-                $request->session()->regenerate();
+            $user = User::where('phone', $phone)->first();
 
-                return response()->json([
-                    'status' => 200,
-                    'data' => $request->user(),
-                    'message' => 'Authenticated'
-                ]);
-            } else {
+            if (!$user) {
                 return response()->json([
                     'status' => 401,
                     'message' => 'Unauthenticated'
                 ]);
             }
+
+            if (!Hash::check($password, $user->password)) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthenticated'
+                ]);
+            }
+
+            Auth::login($user, true);
+
+            $request->session()->regenerate();
+
+            return response()->json([
+                'status' => 200,
+                'data' => User::getUserInfo($user->id),
+                'message' => 'Authenticated'
+            ]);
 
         } catch (Exception $e) {
             return response()->json([
@@ -68,7 +80,7 @@ class AuthController extends Controller
             $user = $request->user();
 
             if ($user) {
-                $user = User::getUserInfo($user);
+                $user = User::getUserInfo($user->id);
 
                 return response()->json([
                     'status' => 200,

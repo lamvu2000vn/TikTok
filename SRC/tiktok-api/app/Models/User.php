@@ -107,8 +107,8 @@ class User extends Authenticatable
                 users.avatar,
                 users.verified,
                 users.status,
-                (SELECT COUNT(*) FROM following WHERE following.user_id = videos.user_id) AS following,
-                (SELECT COUNT(*) FROM followers WHERE followers.user_id = videos.user_id) AS followers,
+                (SELECT COUNT(*) FROM following WHERE following.user_id = users.id) AS following,
+                (SELECT COUNT(*) FROM followers WHERE followers.user_id = users.id) AS followers,
                 (
                     SELECT COUNT(*)
                     FROM videos_liked
@@ -127,11 +127,11 @@ class User extends Authenticatable
 
         switch ($type) {
             case 'integer':
-                $whereClause = "WHERE users.id = $userIdentify";
+                $whereClause = " WHERE users.id = $userIdentify";
                 break;
             case 'array':
                 $stringUserIds = '(' . implode(', ', $userIdentify) . ')';
-                $whereClause ="WHERE users.id IN $stringUserIds";
+                $whereClause =" WHERE users.id IN $stringUserIds";
                 break;
             default:
                 return false;

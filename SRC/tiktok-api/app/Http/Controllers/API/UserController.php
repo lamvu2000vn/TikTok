@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use App\Models\Following;
 use App\Models\User;
 use App\Models\Video;
@@ -51,17 +52,14 @@ class UserController extends Controller
                                         ->limit($limit)
                                         ->offset($offset)
                                         ->get()
-                                        ->pluck('following_id');
-                                        
-            $usersFollowing = User::whereIn('id', $followingIds)->get();
+                                        ->pluck('following_id')
+                                        ->toArray();
 
-            foreach ($usersFollowing as $user) {
-                $user = User::getUserInfo($user);
-            }
+            $users = User::getUserInfo($followingIds);
     
             return response()->json([
                 'status' => 200,
-                'data' => $usersFollowing
+                'data' => $users
             ]);
         } catch (Exception $e) { 
             return response()->json([

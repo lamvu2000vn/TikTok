@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Exception;
 use App\helpers\VideoStream;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 // Model
 use App\Models\User;
@@ -29,7 +29,13 @@ class VideoController extends Controller
             $limit = $request->limit;
             $offset = $request->offset;
 
-            $videoIds = Video::orderBy('post_date')->limit($limit)->offset($offset)->get()->pluck('id')->toArray();
+            $videoIds = Video::orderBy('post_date')
+                ->limit($limit)
+                ->offset($offset)
+                ->get()
+                ->pluck('id')
+                ->toArray();
+
             $videos = Video::getVideoByIds($videoIds);
     
             return response()->json([
@@ -48,36 +54,6 @@ class VideoController extends Controller
     public function followingPage(Request $request)
     {
         try {
-            $limit = $request->limit;
-            $offset = $request->offset;
-            $user = $request->user();
-
-            if (!$user) {
-                return response()->json([
-                    'status' => 401,
-                    'message' => 'Unauthenticated'
-                ]);
-            }
-
-            $followingIds = Following::where('user_id', $user->id)
-                                        ->select('following_id')
-                                        ->pluck('following_id');
-
-            $ids = Video::whereIn('user_id', $followingIds)
-                            ->limit($limit)
-                            ->offset($offset)
-                            ->select('id')
-                            ->get()
-                            ->pluck('id')
-                            ->toArray();
-
-            $videos = Video::getVideoByIds($ids);
-    
-            return response()->json([
-                'status' => 200,
-                'message' => 'success',
-                'data' => $videos
-            ]);
 
         } catch (Exception $e) {
             return response()->json([
