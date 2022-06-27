@@ -8,27 +8,29 @@ import { VIDEOS } from '../../API'
 // Component
 import { Button } from '../../UI'
 import { UserAvatar, Nickname } from '../User'
+import Video from '../Video/Video'
 
 // Style
 import styles from './UserCard.module.css'
 
 const UserCard = ({ user, itemIndex, playingIndex, onHover, onShowAuthModal }) => {
     const videoRef = useRef()
-    const src = VIDEOS + '/' + user.video.name
-
+    
     const handleNavigateToUserPage = e => {
         e.preventDefault()
-
+        
         const tagName = e.target.tagName
-
+        
         if (tagName === 'BUTTON') {
             return onShowAuthModal()
         }
-
+        
         window.open(`/@${user.nickname}`)
     }
-
+    
     useEffect(() => {
+        videoRef.current.currentTime = 0
+
         if (playingIndex === itemIndex) {
             videoRef.current.play()
         } else {
@@ -39,15 +41,7 @@ const UserCard = ({ user, itemIndex, playingIndex, onHover, onShowAuthModal }) =
     return (
         <div className={styles.container} onMouseEnter={() => onHover(itemIndex)}>
             <Link to={`/@${user.nickname}`} className={styles['a-user-card']} onClick={handleNavigateToUserPage}>
-                <div className={styles['video-player-container']}>
-                    {
-                        user.video && (
-                            <div className={styles['video-player-wrapper']}>
-                                <video ref={videoRef} src={src} className={styles.video} loop muted />
-                            </div>
-                        )
-                    }
-                </div>
+                <Video ref={videoRef} filename={user.video.fillename} objectFit="cover" />
                 <div className={styles['user-info-container']}>
                     <div className="mb-3">
                         <UserAvatar filename={user.avatar} size={48} />

@@ -21,7 +21,8 @@ const VideosList = ({ user }) => {
     const dispatch = useDispatch()
 
     const [playingIndex, setPlayingIndex] = useState(0)
-    const [videosList, setVideosList] = useState([])
+    const [itemsList, setItemsList] = useState([])
+    const [isFetch, setIsFetch] = useState(false)
 
     const {showVideoDetails} = useSelector(state => state.videoDetails)
 
@@ -30,12 +31,12 @@ const VideosList = ({ user }) => {
     }, [])
 
     const handleShowVideoDetails = useCallback((itemIndex, currentTime) => {
-        dispatch(videoDetailsActions.setVideosList(videosList))
+        dispatch(videoDetailsActions.setVideosList(itemsList))
         dispatch(videoDetailsActions.showVideoDetails({
             itemIndex,
             currentTime
         }))
-    }, [dispatch, videosList])
+    }, [dispatch, itemsList])
 
     useEffect(() => {
         const url = USER + '/' + user.id + '/videos'
@@ -44,11 +45,15 @@ const VideosList = ({ user }) => {
             limit: 30,
             offset: 0
         }).then(response => {
-            if (response.data.status === 200) {
-                setVideosList(response.data.data)
+            const {status, data} = response.data
+            if (status === 200) {
+                setItemsList(data)
             }
+
+            setIsFetch(true)
         }).catch(error => {
             console.error(error)
+            setIsFetch(true)
         })
     }, [user.id])
 
@@ -56,17 +61,21 @@ const VideosList = ({ user }) => {
         <>
             <div className={styles.container}>
                 {
-                    videosList.length ? (
-                        videosList.map((video, key) => (
-                            <VideoItem
-                                key={key}
-                                video={video}
-                                itemIndex={key}
-                                playingIndex={playingIndex}
-                                onHover={handleVideoHover}
-                                onShowVideoDetails={handleShowVideoDetails}
-                            />
-                        ))
+                    isFetch ? (
+                        itemsList.length ? (
+                            itemsList.map((item, key) => (
+                                <VideoItem
+                                    key={key}
+                                    video={item.video}
+                                    itemIndex={key}
+                                    playingIndex={playingIndex}
+                                    onHover={handleVideoHover}
+                                    onShowVideoDetails={handleShowVideoDetails}
+                                />
+                            ))
+                        ) : (
+                            <div>No videos</div>
+                        )
                     ) : (
                         <div className="absolute left-0 top-10 right-0 w-full">
                             <Loading />

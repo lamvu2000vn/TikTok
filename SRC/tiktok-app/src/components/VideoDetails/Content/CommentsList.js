@@ -13,6 +13,7 @@ import CommentItem from './CommentItem'
 import styles from './CommentsList.module.css'
 
 const CommentsList = ({ videoId }) => {
+    const [isFetch, setIsFetch] = useState(false)
     const [commentsList, setCommentsList] = useState([])
 
     // Fetch comments
@@ -22,20 +23,30 @@ const CommentsList = ({ videoId }) => {
             offset: 0
         }).then(response => {
             if (response.data.status === 200) {
+                setIsFetch(true)
                 setCommentsList(response.data.data)
             }
         }).catch(error => {
             console.log(error)
         })
+
+        return () => {
+            setIsFetch(false)
+            setCommentsList([])
+        }
     }, [videoId])
 
     return (
         <div className={styles.container}>
             {
-                commentsList.length ? (
-                    commentsList.map(comment => (
-                        <CommentItem key={comment.id} comment={comment} />
-                    ))
+                isFetch ? (
+                    commentsList.length ? (
+                        commentsList.map(comment => (
+                            <CommentItem key={comment.id} comment={comment} />
+                        ))
+                    ) : (
+                        <div>No comments</div>
+                    )
                 ) : (
                     <Loading />
                 )

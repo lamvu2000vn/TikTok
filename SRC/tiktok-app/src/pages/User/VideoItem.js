@@ -1,8 +1,8 @@
 // Library
 import { useRef, useEffect } from 'react'
 
-// API
-import { VIDEOS } from '../../API'
+// Component
+import Video from '../../components/Video/Video'
 
 // Function
 import { shortenTheNumber } from '../../common/functions'
@@ -30,16 +30,10 @@ const VideoItem = ({ video, itemIndex, playingIndex, onHover, onShowVideoDetails
         }
     }, [itemIndex, playingIndex])
 
-    const src = VIDEOS + '/' + video.name
-
     return (
         <div className={styles.container} onMouseEnter={() => onHover(itemIndex)} onClick={handleShowVideoDetails}>
             <div className={styles['video-container']}>
-                <div className={styles['video-player-container']}>
-                    <div className={styles['video-player-wrapper']}>
-                        <video ref={videoRef} src={src} className={styles.video} muted loop />
-                    </div>
-                </div>
+                <Video ref={videoRef} filename={video.filename} objectFit="cover" />
                 <div className={styles['count-watching-container']}>
                     <FiPlay />
                     {shortenTheNumber(0)}

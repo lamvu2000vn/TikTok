@@ -21,22 +21,28 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/test', function() {
-    return 'test';
-});
-
+// Auth
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::get('/check-login', [AuthController::class, 'checkLogin']);
 
+// Public
+Route::get('/stream-video/{filename}', [VideoController::class, 'streamVideo']);
+
 Route::get('/recommended-users', [UserController::class, 'getRecommendedUsers']);
 Route::post('/following-users', [UserController::class, 'getFollowingUsers']);
-Route::get('/stream-video/{filename}', [VideoController::class, 'streamVideo']);
 Route::get('/follow-user/{id}', [UserController::class, 'followUser']);
-Route::get('/user/{nickname}', [UserController::class, 'getUserByNickname']);
-Route::post('/user/{id}/videos', [UserController::class, 'getVideosOfuser']);
 
+// User
+Route::prefix('/user')->group(function () {
+    Route::get('/{id}/order-infomation', [UserController::class, 'getOrtherInfomation']);
+    Route::get('/{nickname}', [UserController::class, 'getUserByNickname']);
+    Route::post('/{userIdentify}/videos', [UserController::class, 'getVideosOfuser']);
+});
+
+// Video
 Route::post('/video/{id}/comments', [VideoController::class, 'getCommentsOfVideo']);
+Route::get('/like-video/{id}', [VideoController::class, 'likeVideo']);
 
 // Page
 Route::post('/for-you', [VideoController::class, 'forYouPage']);

@@ -9,12 +9,12 @@ import { videoDetailsActions } from '../../store/slices/videoDetailsSlice'
 // Component
 import { FollowButton } from '../../UI'
 import { UserInfoWrapper, UserAvatar } from '../User'
-import VideoPlayer from './VideoPlayer'
 import PlayVideoButton from './Controls/PlayVideoButton'
 import VolumeControl from './Controls/VolumeControl'
 import VideoControl from './Controls/VideoControl'
 import ReportVideoButton from './Controls/ReportVideobutton'
 import { AuthModal } from '../Modal'
+import Video from '../Video/Video'
 
 // Function
 import { shortenTheNumber, likeVideo } from '../../common/functions'
@@ -35,14 +35,13 @@ const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
     const [showVideoControl, setShowVideoControl] = useState(true)
     
     const videoRef = useRef()
+    const likeButtonRef = useRef()
 
-    const {showVideoDetails, watchingIndex} = useSelector(state => state.videoDetails)
+    const {showVideoDetails, watchingIndex, currentTime} = useSelector(state => state.videoDetails)
 
     const {videoState, itemsList} = useSelector(state => state.videosFeed)
-    const currentTime = videoState.currentTime
-    const volume = videoState.volume
-    const video = item
-    const {user} = video
+    const {volume} = videoState
+    const {video, user} = item
 
     const {isLogin} = useSelector(state => state.auth)
 
@@ -53,15 +52,17 @@ const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
 
     // Show video details
     const handleSeeVideoDetails = useCallback(() => {
-        videoRef.current.currentTime = 0
+        const currentTime = videoRef.current.currentTime
 
         setIsPause(true)
 
         dispatch(videoDetailsActions.setVideosList(itemsList))
         dispatch(videoDetailsActions.showVideoDetails({
             itemIndex,
-            currentTime: videoRef.current.currentTime
+            currentTime
         }))
+
+        videoRef.current.currentTime = 0
     }, [dispatch, itemIndex, itemsList])
 
     const handleToggleAuthModal = useCallback(() => {
@@ -72,8 +73,13 @@ const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
         if (isLogin) {
             likeVideo(video.id)
                 .then(response => {
-                    if (response.data.status === 200) {
-                        console.log('liked')
+                    const {status, action} = response.data
+                    if (status === 200) {
+                        if (action === 'like') {
+                            likeButtonRef.current.style.color = 'rgb(254, 44, 85)'
+                        } else {
+                            likeButtonRef.current.style.color = '#333'
+                        }
                     }
                 })
                 .catch(error => {
@@ -151,6 +157,13 @@ const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
         }
     }, [currentTime, itemIndex, showVideoDetails, watchingIndex])
 
+    // Active like button
+    useEffect(() => {
+        if (video.is_liked) {
+            likeButtonRef.current.style.color = 'rgb(254, 44, 85)'
+        }
+    }, [video.is_liked])
+
     return (
         <div className={styles.container}>
             <UserInfoWrapper user={user} showDescription showPopover>
@@ -178,7 +191,7 @@ const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
                         <canvas width="56.25" height="100" className={styles['canvas-video-card']} />
                         <div className={styles['video-player-container']}>
                             {/* video */}
-                            <VideoPlayer ref={videoRef} filename={video.name} onClick={handleSeeVideoDetails} />
+                            <Video ref={videoRef} filename={video.filename} onClick={handleSeeVideoDetails} />
                             {/* Play/Pause video button */}
                             <div className={styles['play-icon-container']}>
                                 <PlayVideoButton pause={isPause} onClick={handlePlayOrPause} />
@@ -205,7 +218,7 @@ const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
                     </div>
                     <div className={styles['action-container']}>
                         <button className={styles['action-button']} onClick={handleLikeVideo}>
-                            <span className={styles['action-icon']}><BsFillHeartFill /></span>
+                            <span ref={likeButtonRef} className={styles['action-icon']}><BsFillHeartFill /></span>
                             <strong>{shortenTheNumber(video.likes)}</strong>
                         </button>
                         <button className={styles['action-button']} onClick={handleSeeVideoDetails}>

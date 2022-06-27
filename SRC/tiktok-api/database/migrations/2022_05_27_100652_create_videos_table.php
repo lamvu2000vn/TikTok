@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('name', 200)->comment('Tên hình');
+            $table->string('filename', 200)->comment('Tên hình');
             $table->float('duration')->default(0)->comment('Độ dài video');
             $table->text('description')->nullable();
             $table->boolean('allow_comments')->comment('0: Không có phép bình luận, 1: Cho phép bình luận');

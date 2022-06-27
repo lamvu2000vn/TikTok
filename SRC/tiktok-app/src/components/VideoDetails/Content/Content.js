@@ -29,15 +29,14 @@ const Content = () => {
     const dispatch = useDispatch()
 
     const {watchingIndex, videosList} = useSelector(state => state.videoDetails)
-    const item = videosList[watchingIndex]
-    const {user} = item
+    const {video, user} = videosList[watchingIndex]
 
     const {toast} = useSelector(state => state.ui)
 
-    const videoUrl = `${HOST}/@${user.nickname}/video/${item.id}`
+    const videoUrl = `${HOST}/@${user.nickname}/video/${video.id}`
 
     const handleCopyVideoLink = () => {
-        navigator.clipboard.writeText(videoUrl)
+        navigator.clipboard.writeText(`${HOST}/@${user.nickname}/video/${video.id}`)
         dispatch(uiSliceActions.showToast('Đã sao chép'))
     }
 
@@ -55,7 +54,7 @@ const Content = () => {
                         <div className={styles['orther-info-container']}>
                             <Link to={`/@${user.nickname}`}>{user.name}</Link>
                             <BsDot />
-                            <span>{convertToFriendlyTime(item.post_date)}</span>
+                            <span>{convertToFriendlyTime(video.post_date)}</span>
                         </div>
                     </UserInfoWrapper>
                 </div>
@@ -64,17 +63,17 @@ const Content = () => {
                 </div>
             </div>
             <div className={styles['main-content-container']}>
-                <div>{item.description}</div>
+                <div>{video.description}</div>
                 <div className="py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex gap-5">
                             <button className="flex items-center gap-2">
                                 <LikeIcon size={32} />
-                                <b className="text-xs">{shortenTheNumber(item.likes)}</b>
+                                <b className="text-xs">{shortenTheNumber(video.likes)}</b>
                             </button>
                             <button className="flex items-center gap-2">
                                 <CommentIcon size={32} />
-                                <b className="text-xs">{shortenTheNumber(item.comments)}</b>
+                                <b className="text-xs">{shortenTheNumber(video.comments)}</b>
                             </button>
                         </div>
                     </div>
@@ -84,7 +83,7 @@ const Content = () => {
                     </div>
                 </div>
             </div>
-            <CommentsList videoId={item.id} />
+            <CommentsList videoId={video.id} />
             <BottomComment />
             <Toast show={toast.isShow} />
         </div>

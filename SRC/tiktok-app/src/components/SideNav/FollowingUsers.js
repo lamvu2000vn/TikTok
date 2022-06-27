@@ -28,6 +28,7 @@ const FolllowingUsers = () => {
             const newData = followingUsers.slice(0, LIMIT)
             setNumber(LIMIT)
             dispatch(sidebarSliceActions.setFollowingUsers(newData))
+            setIsShowAll(false)
         } else {
             setNumber(state => state + LIMIT)
         }

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Exception;
 use App\helpers\VideoStream;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 // Model
 use App\Models\User;
@@ -14,6 +14,7 @@ use App\Models\Video;
 use App\Models\Following;
 use App\Models\Comment;
 use App\Models\CommentLiked;
+use App\Models\VideoLiked;
 
 class VideoController extends Controller
 {
@@ -27,14 +28,9 @@ class VideoController extends Controller
         try {
             $limit = $request->limit;
             $offset = $request->offset;
-            $videos = Video::limit($limit)->offset($offset)->get();
-    
-            foreach ($videos as $video) {
-                $user = $video->user;
-                $video->likes = Video::getNumberOfLikes($video->id);
-                $video->comments = Video::getNumberOfComments($video->id);
-                $video->user = User::getUserInfo($user);
-            }
+
+            $videoIds = Video::orderBy('post_date')->limit($limit)->offset($offset)->get()->pluck('id')->toArray();
+            $videos = Video::getVideoByIds($videoIds);
     
             return response()->json([
                 'status' => 200,
@@ -67,17 +63,15 @@ class VideoController extends Controller
                                         ->select('following_id')
                                         ->pluck('following_id');
 
-            $videos = Video::whereIn('user_id', $followingIds)
+            $ids = Video::whereIn('user_id', $followingIds)
                             ->limit($limit)
                             ->offset($offset)
-                            ->get();
+                            ->select('id')
+                            ->get()
+                            ->pluck('id')
+                            ->toArray();
 
-            foreach ($videos as $video) {
-                $user = $video->user;
-                $video->likes = Video::getNumberOfLikes($video->id);
-                $video->comments = Video::getNumberOfComments($video->id);
-                $video->user = User::getUserInfo($user);
-            }
+            $videos = Video::getVideoByIds($ids);
     
             return response()->json([
                 'status' => 200,
@@ -128,5 +122,44 @@ class VideoController extends Controller
         $path = public_path("videos/$filename");
         $stream = new VideoStream($path);
         $stream->start();
+    }
+
+    public function likeVideo(Request $request, $id)
+    {
+        try {
+            $user = $request->user();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthenticated'
+                ]);
+            }
+
+            $action = '';
+            $isLiked = VideoLiked::where('user_id', $user->id)->where('video_id', $id)->first();
+
+            if (!$isLiked) {
+                $action = 'like';
+                VideoLiked::create([
+                    'user_id' => $user->id,
+                    'video_id' => $id
+                ]);
+            } else {
+                $action = 'unlike';
+                $isLiked->delete();
+            }
+
+            return response()->json([
+                'status' => 200,
+                'action' => $action,
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 }

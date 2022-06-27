@@ -1,6 +1,6 @@
 // Library
 import { useSelector, useDispatch } from 'react-redux'
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import axios from 'axios'
 
 // Action
@@ -17,6 +17,8 @@ import FollowingButton from './FollowingButton'
 
 const FollowButton = ({ user, outline = true }) => {
     const dispatch = useDispatch()
+
+    const [changeToFollowing, setChangeToFollowing] = useState(false)
     const [showAuthModal, setShowAuthModal] = useState(false)
 
     const {isLogin} = useSelector(state => state.auth)
@@ -28,6 +30,7 @@ const FollowButton = ({ user, outline = true }) => {
                     const {status} = response.data
 
                     if (status === 200) {
+                        setChangeToFollowing(true)
                         dispatch(videosFeedActions.followUser(user))
                         dispatch(sidebarSliceActions.followUser(user))
                     }
@@ -41,20 +44,23 @@ const FollowButton = ({ user, outline = true }) => {
     }
 
     return (
-        isLogin ? (
-            user && user.isFollowing ? (
-                <FollowingButton user={user} />
-            ) : (
-                <Button outline={outline} onClick={handleFolowUser}>Follow</Button>
-            )
+        changeToFollowing ? (
+            <FollowingButton user={user} outline={outline} />
         ) : (
-            <>
-                <Button outline={outline} onClick={handleFolowUser}>Follow</Button>
-                <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} />
-            </>
+            isLogin ? (
+                user && user.is_following ? (
+                    <FollowingButton user={user} outline={outline} />
+                ) : (
+                    <Button outline={outline} onClick={handleFolowUser}>Follow</Button>
+                )
+            ) : (
+                <>
+                    <Button outline={outline} onClick={handleFolowUser}>Follow</Button>
+                    <AuthModal show={showAuthModal} onClose={() => setShowAuthModal(false)} />
+                </>
+            )
         )
-    
     )
 }
 
-export default FollowButton
+export default memo(FollowButton)

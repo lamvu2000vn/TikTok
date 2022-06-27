@@ -4,8 +4,7 @@ const initialState = {
     videoState: {
         isMuted: true,
         volume: 0,
-        prevVolume: 1,
-        currentTime: 0
+        prevVolume: 1
     },
     showVolumeSlider: false,
     itemsList: []
@@ -17,6 +16,9 @@ const videosFeedSlice = createSlice({
     reducers: {
         setItemsList(state, action) {
             state.itemsList = action.payload
+        },
+        pushItemsList(state, action) {
+            state.itemsList.push(...action.payload)
         },
         changeVolume(state, action) {
             const value = Number(action.payload)

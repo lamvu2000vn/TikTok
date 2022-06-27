@@ -1,5 +1,6 @@
 // Library
 import { useCallback, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 // Component
 import { AuthModal } from '../../Modal'
@@ -7,10 +8,10 @@ import { AuthModal } from '../../Modal'
 // Style
 import styles from './BottomComment.module.css'
 
-const login = false
-
 const BottomComment = () => {
     const [showAuthModal, setShowAuthModal] = useState(false)
+
+    const {isLogin} = useSelector(state => state.auth)
 
     const handleToggleLoginModal = useCallback(() => {
         setShowAuthModal(state => !state)
@@ -19,7 +20,7 @@ const BottomComment = () => {
     return (
         <div className={styles.container}>
             {
-                login ? (
+                isLogin ? (
                     <div className="flex items-end">
                         <div className="flex-auto">
                             <div className={styles['input-container']}></div>
@@ -27,7 +28,7 @@ const BottomComment = () => {
                     </div>
                 ) : (
                     <>
-                        <div className={styles['login-bar']} onClick={handleToggleLoginModal}>Please log in to comment</div>
+                        <div className={styles['login-button']} onClick={handleToggleLoginModal}>Please log in to comment</div>
                         <AuthModal show={showAuthModal} onClose={handleToggleLoginModal} />
                     </>
                 )

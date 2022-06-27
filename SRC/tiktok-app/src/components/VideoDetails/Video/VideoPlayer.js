@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { videoDetailsActions } from '../../../store/slices/videoDetailsSlice'
 
 // Component
-import Video from '../../VideosFeed/VideoPlayer'
+import Video from '../../Video/Video'
 import VideoControl from '../../VideosFeed/Controls/VideoControl'
 import VolumeControl from '../../VideosFeed/Controls/VolumeControl'
 import { PrevButton, NextButton } from './SwitchVideoButton'
@@ -29,11 +29,11 @@ const VideoPlayer = () => {
     const videoRef = useRef()
     const seekbarRef = useRef()
 
-    const {watchingIndex, videosList} = useSelector(state => state.videoDetails)
-    const video = videosList[watchingIndex]
+    const {watchingIndex, videosList, currentTime} = useSelector(state => state.videoDetails)
+    const {video, user} = videosList[watchingIndex]
     
     const {videoState} = useSelector(state => state.videosFeed)
-    const {volume, currentTime} = videoState
+    const {volume} = videoState
 
     const handlePlayOrPause = useCallback(() => {
         setIsPause(prevState => !prevState)
@@ -79,7 +79,7 @@ const VideoPlayer = () => {
         <div className={styles.container}>
             <div className={styles['blur-background']} />
             <div className={styles['video-wrapper']} onMouseEnter={handleToggleSeekbar} onMouseLeave={handleToggleSeekbar}>
-                <Video ref={videoRef} filename={video.name} onClick={handlePlayOrPause} />
+                <Video ref={videoRef} filename={video.filename} onClick={handlePlayOrPause} />
                 <div ref={seekbarRef} className={styles['video-control-container']}>
                     <VideoControl
                         size="lg"

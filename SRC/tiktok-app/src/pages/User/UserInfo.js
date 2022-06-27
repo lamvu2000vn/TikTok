@@ -33,7 +33,7 @@ const UserInfo = ({ user }) => {
                 </div>
                 <div className={styles['count-info-container']}>
                     <div className={styles['number-wrapper']}>
-                        <strong>0</strong>
+                        <strong>{shortenTheNumber(user.following)}</strong>
                         <span className={styles['span-unit']}>Đang Follow</span>
                     </div>
                     <div className={styles['number-wrapper']}>

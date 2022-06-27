@@ -16,11 +16,20 @@ import Content from './Content'
 import styles from './UserPage.module.css'
 
 const UserPage = () => {
-    const [user, setUser] = useState()
+    const [user, setUser] = useState(null)
+    const [videosList, setVideosList] = useState([])
 
     useEffect(() => {
         const nickname = window.location.pathname.substring(2)
         
+        const getUser = axios(USER + '/' + nickname)
+        const getVideosOfUser = axios(USER + '/' + nickname + '/videos')
+
+        Promise.all([getUser, getVideosOfUser])
+            .then(response => {
+                console.log(response)
+            })
+
         axios(USER + '/' + nickname)
             .then(response => {
                 if (response.data.status === 200) {

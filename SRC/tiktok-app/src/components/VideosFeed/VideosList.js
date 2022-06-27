@@ -1,6 +1,13 @@
 // Library
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { memo, useEffect, useState } from 'react'
+import axios from 'axios'
+
+// Action
+import { videosFeedActions } from '../../store/slices/videosFeedSlice'
+
+// API
+import { FOR_YOU_PAGE, FOLLOWING_PAGE } from '../../API'
 
 // Component
 import { Loading } from '../../UI'
@@ -10,16 +17,32 @@ import VideoDetails from '../VideoDetails/VideoDetails'
 // Style
 import styles from './VideosList.module.css'
 
-const VideosList = () => {
+const LIMIT = 7
+
+const VideosList = ({ page }) => {
+    const dispatch = useDispatch()
+
+    const [offset, setOffset] = useState(0)
+    const [scrollY, setScrollY] = useState(0)
+    const [isFetching, setIsFetching] = useState(false)
+    const [isFetchAll, setIsFetchAll] = useState(false)
+
     const {itemsList} = useSelector(state => state.videosFeed)
     const {showVideoDetails} = useSelector(state => state.videoDetails)
-
-    const [scrollY, setScrollY] = useState(0)
 
     // Handle scroll
     useEffect(() => {
         const handleVideosFeedScroll = () => {
             const scrollY = window.scrollY
+            const percentage = document.body.clientHeight * 0.7
+
+            if (isFetchAll === false && scrollY >= percentage) {
+                if (isFetching === false) {
+                    setIsFetching(true)
+                    setOffset(state => state += LIMIT)
+                }
+            }
+
             setScrollY(scrollY)
         }
 
@@ -28,7 +51,32 @@ const VideosList = () => {
         return () => {
             window.removeEventListener('scroll', handleVideosFeedScroll)
         }
-    }, [])
+    }, [isFetchAll, isFetching])
+
+    // fetch videos
+    useEffect(() => {
+        const url = page === 'for-you' ? FOR_YOU_PAGE : FOLLOWING_PAGE
+
+        axios.post(url, {
+            limit: LIMIT,
+            offset
+        })
+            .then(response => {
+                if (response.data.status === 200) {
+                    const {data} = response.data
+
+                    if (data.length > 0) {
+                        dispatch(videosFeedActions.pushItemsList(data))
+                    } else {
+                        setIsFetchAll(true)
+                    }
+
+                    setIsFetching(false)
+                }
+            }).catch(error => {
+                console.error(error)
+            })
+    }, [dispatch, offset, page])
 
     useEffect(() => {
         if (showVideoDetails === true) {
@@ -41,6 +89,14 @@ const VideosList = () => {
     const videosList = itemsList.map((item, key) => (
         <VideosFeedItem key={key} item={item} itemIndex={key} scrollY={scrollY} />
     ))
+
+    if (isFetchAll === false) {
+        videosList.push(
+            <div key={itemsList.length} className="relative w-full py-10">
+                <Loading />
+            </div>
+        )
+    }
 
     return (
         <>

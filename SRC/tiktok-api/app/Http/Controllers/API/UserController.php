@@ -18,12 +18,8 @@ class UserController extends Controller
     public function getRecommendedUsers()
     {
         try {
-            $users = User::where('verified', 1)->limit(30)->get();
-
-            foreach ($users as $user) {
-                $user = User::getUserInfo($user);
-                $user->video = Video::where('user_id', $user->id)->inRandomOrder()->first();
-            }
+            $userIds = User::where('verified', 1)->limit(30)->select('id')->get()->pluck('id')->toArray();
+            $users = User::getUserInfo($userIds);
     
             return response()->json([
                 'status' => 200,
@@ -113,6 +109,27 @@ class UserController extends Controller
             ]);
         }
     }
+    
+    public function getOrtherInfomation(Request $request, $id)
+    {
+        try {
+            $user = $request->user();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthenticated'
+                ]);
+            }
+
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 
     public function getUserByNickname($nickname)
     {
@@ -133,17 +150,13 @@ class UserController extends Controller
         }
     }
 
-    public function getVideosOfuser(Request $request, $id)
+    public function getVideosOfuser(Request $request, $userIdentify)
     {
         try {
             $limit = $request->limit;
             $offset = $request->offset;
-            $videos = Video::where('user_id', $id)->limit($limit)->offset($offset)->orderBy('id', 'desc')->get();
 
-            foreach ($videos as $video) {
-                $user = User::find($video->user_id);
-                $video->user = User::getUserInfo($user);
-            }
+            $videos = Video::getVideosOfUser($userIdentify, $limit, $offset);
 
             return response()->json([
                 'status' => 200,

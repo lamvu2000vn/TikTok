@@ -93,57 +93,54 @@ class User extends Authenticatable
     }
 
     // Functions
-    public static function getUserInfo($user)
+    public static function getUserInfo($userIdentify)
     {
+        $loginUserId = Auth::id() ?? 0;
 
-        $user->followers = self::getNumberOfFollower($user->id);
-        $user->following = self::getNumberOfFollowing($user->id);
-        $user->likes = self::getTotalLike($user->id);
-        $user->isFollowing = self::checkIsFollowing($user->id);
+        $query = "
+            SELECT
+                users.id,
+                users.phone,
+                users.nickname,
+                users.name,
+                users.description,
+                users.avatar,
+                users.verified,
+                users.status,
+                (SELECT COUNT(*) FROM following WHERE following.user_id = videos.user_id) AS following,
+                (SELECT COUNT(*) FROM followers WHERE followers.user_id = videos.user_id) AS followers,
+                (
+                    SELECT COUNT(*)
+                    FROM videos_liked
+                    WHERE videos_liked.video_id IN (
+                        SELECT videos.id
+                        FROM videos
+                        WHERE videos.user_id = users.id
+                    )
+                ) AS likes,
+                (SELECT COUNT(*) FROM following WHERE following.user_id = $loginUserId AND following.following_id = users.id) AS is_following
+            FROM users
+        ";
 
-        return $user;
-    }
+        $type = gettype($userIdentify);
+        $whereClause = '';
 
-    public static function getNumberOfFollower($user_id)
-    {
-        return DB::table('followers')->where('user_id', $user_id)->count();
-    }
-
-    public static function getFollowers($user_id)
-    {
-        return DB::table('followers')->where('user_id', $user_id)->get();
-    }
-
-    public static function getNumberOfFollowing($user_id)
-    {
-        return DB::table('following')->where('user_id', $user_id)->count();
-    }
-
-    public static function getFollowing($user_id)
-    {
-        return DB::table('following')->where('user_id', $user_id)->get();
-    }
-
-    public static function getTotalLike($user_id)
-    {
-        $videoIds = DB::table('videos')->where('user_id', $user_id)->get()->pluck('id');
-
-        $totalLike = DB::table('videos_liked')->whereIn('video_id', $videoIds)->count();
-
-        return $totalLike;
-    }
-
-    // Kiểm tra người dùng đang đăng nhập hiện tại có đang theo dõi tài khoản khác theo id không
-    public static function checkIsFollowing($following_id)
-    {
-        $user = Auth::user();
-
-        if ($user) {
-            $isFollowing = Following::where('user_id', $user->id)->where('following_id', $following_id)->first();
-            return  $isFollowing ? true : false;
+        switch ($type) {
+            case 'integer':
+                $whereClause = "WHERE users.id = $userIdentify";
+                break;
+            case 'array':
+                $stringUserIds = '(' . implode(', ', $userIdentify) . ')';
+                $whereClause ="WHERE users.id IN $stringUserIds";
+                break;
+            default:
+                return false;
         }
 
-        return false;
+        $query .= $whereClause;
+        $result = DB::select($query);
+
+        return $result;
     }
 
     public static function checkLikedComment($comment_id)
