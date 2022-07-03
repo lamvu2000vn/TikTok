@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Exception;
 use App\helpers\VideoStream;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 // Model
 use App\Models\User;
@@ -36,7 +37,7 @@ class VideoController extends Controller
                 ->pluck('id')
                 ->toArray();
 
-            $videos = Video::getVideoByIds($videoIds);
+            $videos = Video::getVideo($videoIds);
     
             return response()->json([
                 'status' => 200,
@@ -54,6 +55,65 @@ class VideoController extends Controller
     public function followingPage(Request $request)
     {
         try {
+            $user = $request->user();
+            $limit = $request->limit;
+            $offset = $request->offset;
+
+            if (!$user) {
+                $sql = DB::select("
+                    SELECT videos.id
+                    FROM videos
+                    WHERE videos.user_id IN (
+                        SELECT	users.id
+                        FROM users
+                        WHERE users.verified = 1
+                    )
+                    ORDER BY RAND()
+                    LIMIT 30
+                ");
+
+                $videoIds = [];
+                foreach ($sql as $val) {
+                    $videoIds[] = $val->id;
+                }
+
+                $videos = Video::getVideo($videoIds);
+
+                return response()->json([
+                    'status' => 200,
+                    'data' => $videos
+                ]);
+            }
+
+            $followingIds = Following::where('user_id', $user->id)
+                                        ->select('following_id')
+                                        ->get()
+                                        ->pluck('following_id')
+                                        ->toArray();
+
+            $videoIds = Video::whereIn('user_id', $followingIds)
+                                ->orderBy('post_date', 'desc')
+                                ->select('id')
+                                ->limit($limit)
+                                ->offset($offset)
+                                ->get()
+                                ->pluck('id')
+                                ->toArray();
+
+            if (count($videoIds) === 0) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'all',
+                    'data' => []
+                ]);
+            }
+
+            $videos = Video::getVideo($videoIds);
+
+            return response()->json([
+                'status' => 200,
+                'data' => $videos
+            ]);
 
         } catch (Exception $e) {
             return response()->json([
@@ -69,20 +129,11 @@ class VideoController extends Controller
             $limit = $request->limit;
             $offset = $request->offset;
 
-            $user = $request->user();
-
-            $commentsList = Comment::where('video_id', $id)->limit($limit)->offset($offset)->get();
-
-            foreach ($commentsList as $comment) {
-                $user = User::find($comment->user_id);
-                $comment->user = User::getUserInfo($user);
-                $comment->likes = CommentLiked::where('comment_id', $comment->id)->where('user_id', $user->id)->count();
-                $comment->isLiked = User::checkLikedComment($comment->id);
-            }
+            $comments = Video::getCommentsOfVideo($id, $limit, $offset);
 
             return response()->json([
                 'status' => 200,
-                'data' => $commentsList
+                'data' => $comments
             ]);
 
         } catch (Exception $e) {
@@ -136,6 +187,52 @@ class VideoController extends Controller
                 'status' => 500,
                 'message' => $e->getMessage()
             ]);
+        }
+    }
+
+    public function submitComment(Request $request)
+    {
+        try {
+            $content = $request->content;
+            $videoID = $request->videoID;
+            $user = $request->user();
+
+            $newComment = Comment::create([
+                'user_id' => $user->id,
+                'video_id' => $videoID,
+                'content' => $content,
+                'post_date' => Carbon::now()
+            ]);
+
+            return response()->json([
+                'status' => 200,
+                'data' => $newComment
+            ]);
+        } catch (Exception $e) {
+            return response($e->getMessage(), 500);
+        }
+    }
+
+    public function deleteComment($id)
+    {
+        try {
+            $comment = Comment::find($id);
+
+            if (!$comment) {
+                return response()->json([
+                    'status' => 400,
+                    'message' => 'comment not found'
+                ]);
+            }
+
+            $comment->delete();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'delete comment successful'
+            ]);
+        } catch (Exception $e) {
+            return response($e->getMessage(), 500);
         }
     }
 }

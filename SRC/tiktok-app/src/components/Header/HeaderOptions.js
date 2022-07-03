@@ -3,6 +3,7 @@ import { useRef, useState } from 'react'
 import { Transition } from 'react-transition-group'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
 
 // Action
 import { authSliceActions } from '../../store/slices/authSlice'
@@ -30,7 +31,7 @@ const HeaderOptions = ({ show }) => {
 
     const nodeRef = useRef()
 
-    const {isLogin} = useSelector(state => state.auth)
+    const {isLogin, user} = useSelector(state => state.auth)
 
     const timeout = {
         appear: 0,
@@ -86,7 +87,7 @@ const HeaderOptions = ({ show }) => {
                         {isLogin && (
                             <>
                                 <li>
-                                    <div className={styles.item}><RiUserLine />Xem hồ sơ</div>
+                                    <Link to={`/@${user.nickname}`} className={styles.item}><RiUserLine />Xem hồ sơ</Link>
                                 </li>
                                 <li>
                                     <div className={styles.item}><BsCoin />Nhận xu</div>

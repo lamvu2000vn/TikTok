@@ -1,6 +1,7 @@
 // Library
 import { useContext, useState, useEffect, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 // Context
@@ -39,6 +40,7 @@ const DefaultLogin = () => {
         isValid: true
     })
     const [password, setPassword] = useState('')
+    const navigate = useNavigate()
 
     const handleChangePhone = useCallback(e => {
         const value = e.target.value
@@ -83,6 +85,7 @@ const DefaultLogin = () => {
                             setTimeout(() => {
                                 dispatch(authSliceActions.login(data))
                                 dispatch(uiSliceActions.showToast('Đăng nhập thành công'))
+                                navigate("/", { replace: true })
                             }, 300)
                         } else if (response.data.status === 401) {
                             setInvalidText('Số điện thoại hoặc mật khẩu không chính xác')

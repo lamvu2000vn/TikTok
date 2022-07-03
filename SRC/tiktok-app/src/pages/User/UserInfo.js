@@ -1,7 +1,9 @@
 // Library
 import { memo } from 'react'
+import { useSelector } from 'react-redux'
 
 // Component
+import EditProfileButton from './EditProfileButton'
 import { UserAvatar, Nickname } from '../../components/User'
 import { Loading, FollowButton } from '../../UI'
 
@@ -16,6 +18,9 @@ import { BsThreeDots } from 'react-icons/bs'
 import styles from './UserInfo.module.css'
 
 const UserInfo = ({ user }) => {
+    const auth = useSelector(state => state.auth)
+    const isLoginUser = auth.user ? auth.user.nickname === user.nickname : false
+
     return (
         user ? (
             <div className={styles.container}>
@@ -26,7 +31,7 @@ const UserInfo = ({ user }) => {
                         <div className="font-semibold text-lg">{user.name}</div>
                         <div className={styles['follow-button-wrapper']}>
                             <div className="w-52">
-                                <FollowButton user={user} outline={false} />
+                                {isLoginUser ? <EditProfileButton /> : <FollowButton user={user} outline={false} />}
                             </div>
                         </div>
                     </div>
@@ -47,7 +52,7 @@ const UserInfo = ({ user }) => {
                 </div>
                 <div className={styles['description-container']}></div>
                 <div className={styles['share-button']}><RiShareForwardLine /></div>
-                <div className={styles['more-button']}><BsThreeDots /></div>
+                {!isLoginUser && <div className={styles['more-button']}><BsThreeDots /></div>}
             </div>
         ) : (
             <Loading />

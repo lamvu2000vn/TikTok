@@ -127,11 +127,11 @@ class User extends Authenticatable
 
         switch ($type) {
             case 'integer':
-                $whereClause = " WHERE users.id = $userIdentify";
+                $whereClause = "WHERE users.id = $userIdentify";
                 break;
             case 'array':
                 $stringUserIds = '(' . implode(', ', $userIdentify) . ')';
-                $whereClause =" WHERE users.id IN $stringUserIds";
+                $whereClause ="WHERE users.id IN $stringUserIds";
                 break;
             default:
                 return false;

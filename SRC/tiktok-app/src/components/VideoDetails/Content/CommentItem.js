@@ -1,3 +1,7 @@
+// Library
+import { useSelector } from 'react-redux'
+import { memo } from 'react'
+
 // Component
 import { UserAvatar, Nickname, UserInfoWrapper } from '../../User'
 
@@ -5,13 +9,16 @@ import { UserAvatar, Nickname, UserInfoWrapper } from '../../User'
 import { convertToFriendlyTime } from '../../../common/functions'
 
 // Icon
-import { BiHeart } from 'react-icons/bi'
+import { BiHeart, BiDotsHorizontalRounded } from 'react-icons/bi'
+import { FiFlag, FiTrash2 } from 'react-icons/fi'
 
 // Style
 import styles from './CommentItem.module.css'
 
-const CommentItem = ({ comment }) => {
-    const {user} = comment
+const CommentItem = ({ item, onShowDeleteCommentModal }) => {
+
+    const auth = useSelector(state => state.auth)
+    const {user, comment} = item
 
     return (
         <div className={styles.container}>
@@ -32,6 +39,22 @@ const CommentItem = ({ comment }) => {
                     </div>
                 </div>
                 <div className={styles['action-container']}>
+                    <div className={styles['option-button']}>
+                        <BiDotsHorizontalRounded />
+                        <div className={styles['comment-option-container']}>
+                            {
+                                user.id === auth.user.id ? (
+                                    <div className={styles['comment-option-item']} onClick={() => onShowDeleteCommentModal(comment.id)}>
+                                        <FiTrash2/>Xóa
+                                    </div>
+                                ) : (
+                                    <div className={styles['comment-option-item']}>
+                                        <FiFlag/>Báo cáo
+                                    </div>
+                                )
+                            }
+                        </div>
+                    </div>
                     <div className={styles['like-button-wrapper']}>
                         <BiHeart />
                         <span className={styles['comment-count']}>{comment.likes}</span>
@@ -43,4 +66,4 @@ const CommentItem = ({ comment }) => {
     )
 }
 
-export default CommentItem
+export default memo(CommentItem)

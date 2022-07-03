@@ -8,7 +8,7 @@ import VideosList from './VideosList'
 // Style
 import styles from './Content.module.css'
 
-const Content = ({ user }) => {
+const Content = ({ videosList }) => {
     const [activeTab, setActiveTab] = useState(0)
 
     const handleChangeTab = useCallback(tab => {
@@ -18,7 +18,7 @@ const Content = ({ user }) => {
     return (
         <div className={styles.container}>
             <Tabs activeTab={activeTab} onChange={handleChangeTab} />
-            <VideosList user={user} />
+            <VideosList videosList={videosList} />
         </div>
     )
 }

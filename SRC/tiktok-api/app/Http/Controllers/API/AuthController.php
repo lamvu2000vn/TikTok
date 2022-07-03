@@ -44,7 +44,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => 200,
-                'data' => User::getUserInfo($user->id),
+                'data' => User::getUserInfo($user->id)[0],
                 'message' => 'Authenticated'
             ]);
 
@@ -59,7 +59,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
-            $request->session()->invalidate();
+            // $request->session()->invalidate();
             Auth::logout();
 
             return response()->json([
@@ -80,7 +80,7 @@ class AuthController extends Controller
             $user = $request->user();
 
             if ($user) {
-                $user = User::getUserInfo($user->id);
+                $user = User::getUserInfo($user->id)[0];
 
                 return response()->json([
                     'status' => 200,

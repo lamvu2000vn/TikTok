@@ -1,5 +1,6 @@
 // Library
 import { memo, useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import axios from 'axios'
 
 // API
@@ -13,33 +14,31 @@ import UserInfo from './UserInfo'
 import Content from './Content'
 
 // Style
-import styles from './UserPage.module.css'
+import styles from './index.module.css'
 
 const UserPage = () => {
-    const [user, setUser] = useState(null)
-    const [videosList, setVideosList] = useState([])
+    const [itemsList, setItemsList] = useState(null)
+    const {nickname} = useParams()
 
     useEffect(() => {
-        const nickname = window.location.pathname.substring(2)
-        
-        const getUser = axios(USER + '/' + nickname)
-        const getVideosOfUser = axios(USER + '/' + nickname + '/videos')
-
-        Promise.all([getUser, getVideosOfUser])
+        axios.post(USER + '/' + nickname + '/videos', {
+            limit: 30,
+            offset: 0
+        })
             .then(response => {
-                console.log(response)
-            })
-
-        axios(USER + '/' + nickname)
-            .then(response => {
-                if (response.data.status === 200) {
-                    setUser(response.data.data)
+                const {status, data} = response.data
+                if (status === 200) {
+                    setItemsList(data)
                 }
             })
             .catch(error => {
                 console.error(error)
             })
-    }, [])
+
+        return () => {
+            setItemsList(null)
+        }
+    }, [nickname])
 
     return (
         <>
@@ -48,10 +47,10 @@ const UserPage = () => {
                 <SideNav width={240} />
                 <div className={styles['user-container']}>
                     {
-                        user ? (
+                        itemsList ? (
                             <div className="flex flex-auto flex-col">
-                                <UserInfo user={user} />
-                                <Content user={user} />
+                                <UserInfo user={itemsList[0].user} />
+                                <Content videosList={itemsList} />
                             </div>
                         ) : (
                             <Loading />

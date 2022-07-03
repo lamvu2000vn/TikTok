@@ -25,6 +25,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::get('/check-login', [AuthController::class, 'checkLogin']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/like-video/{id}', [VideoController::class, 'likeVideo']);
+    Route::post('/submit-comment', [VideoController::class, 'submitComment']);
+    Route::get('/delete-comment/{id}', [VideoController::class, 'deleteComment']);
+});
 
 // Public
 Route::get('/stream-video/{filename}', [VideoController::class, 'streamVideo']);
@@ -42,7 +47,6 @@ Route::prefix('/user')->group(function () {
 
 // Video
 Route::post('/video/{id}/comments', [VideoController::class, 'getCommentsOfVideo']);
-Route::get('/like-video/{id}', [VideoController::class, 'likeVideo']);
 
 // Page
 Route::post('/for-you', [VideoController::class, 'forYouPage']);

@@ -40,9 +40,8 @@ const FolllowingUsers = () => {
             limit: LIMIT,
             offset: number - LIMIT
         }).then(response => {
-            if (response.data.status === 200) {
-                const data = response.data.data
-
+            const {status, data} = response.data
+            if (status === 200) {
                 if (data.length > 0) {
                     if (number === LIMIT) {
                         dispatch(sidebarSliceActions.setFollowingUsers(data))

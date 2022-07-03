@@ -1,10 +1,11 @@
 // Library
 import { useSelector, useDispatch } from 'react-redux'
-import { memo } from 'react'
+import { memo, useState, useCallback, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
 
 // API
-import { HOST } from '../../../API'
+import { HOST, VIDEO } from '../../../API'
 
 // Action
 import { uiSliceActions } from '../../../store/slices/uiSlice'
@@ -28,6 +29,9 @@ import styles from './Content.module.css'
 const Content = () => {
     const dispatch = useDispatch()
 
+    const [isFetch, setIsFetch] = useState(false)
+    const [commentsList, setCommentsList] = useState([])
+
     const {watchingIndex, videosList} = useSelector(state => state.videoDetails)
     const {video, user} = videosList[watchingIndex]
 
@@ -35,10 +39,43 @@ const Content = () => {
 
     const videoUrl = `${HOST}/@${user.nickname}/video/${video.id}`
 
+    const handePushCommentsList = useCallback(comment => {
+        setCommentsList(state => [
+            comment,
+            ...state
+        ])
+    }, [])
+
+    const handleRemoveComment = useCallback(commentID => {
+        setCommentsList(state => state.filter(item => item.comment.id !== commentID))
+    }, [])
+
     const handleCopyVideoLink = () => {
         navigator.clipboard.writeText(`${HOST}/@${user.nickname}/video/${video.id}`)
         dispatch(uiSliceActions.showToast('Đã sao chép'))
     }
+
+    // Fetch comments
+    useEffect(() => {
+        axios.post(VIDEO + '/' + video.id + '/comments', {
+            limit: 30,
+            offset: 0
+        }).then(response => {
+            const {status, data} = response.data
+            
+            if (status === 200) {
+                setIsFetch(true)
+                setCommentsList(data)
+            }
+        }).catch(error => {
+            console.log(error)
+        })
+
+        return () => {
+            setIsFetch(false)
+            setCommentsList([])
+        }
+    }, [video.id])
 
     return (
         <div className={styles.container}>
@@ -59,7 +96,7 @@ const Content = () => {
                     </UserInfoWrapper>
                 </div>
                 <div className={styles['follow-btn-container']}>
-                    <FollowButton />
+                    <FollowButton user={user} outline={false}  />
                 </div>
             </div>
             <div className={styles['main-content-container']}>
@@ -83,8 +120,8 @@ const Content = () => {
                     </div>
                 </div>
             </div>
-            <CommentsList videoId={video.id} />
-            <BottomComment />
+            <CommentsList isFetch={isFetch} commentsList={commentsList} onRemoveComment={handleRemoveComment} />
+            <BottomComment videoID={video.id} onPushCommentsList={handePushCommentsList} />
             <Toast show={toast.isShow} />
         </div>
     )

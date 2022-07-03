@@ -32,8 +32,8 @@
 }
 
 .action-container {
+    position: relative;
     margin-left: 18px;
-    padding-right: 2px;
     width: 24px;
     flex: 0 0 24px;
     padding-top: 24px;
@@ -41,6 +41,65 @@
     flex-direction: column;
     -webkit-box-align: center;
     align-items: center;
+}
+
+.option-button {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.container:hover .option-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comment-option-container {
+    position: absolute;
+    right: -4px;
+    top: 100%;
+    margin-top: 4px;
+    z-index: 1;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .1);
+    border-radius: 8px;
+    padding: 8px 16px;
+    min-width: 200px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.comment-option-container::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    bottom: 100%;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #fff;
+}
+
+.comment-option-item {
+    cursor: pointer;
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    white-space: nowrap;
+}
+
+.comment-option-item:hover {
+    color: var(--main);
 }
 
 .like-button-wrapper {

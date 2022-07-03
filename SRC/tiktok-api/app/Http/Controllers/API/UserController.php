@@ -37,9 +37,9 @@ class UserController extends Controller
     public function getFollowingUsers(Request $request)
     {
         try {
+            $user = $request->user();
             $limit = $request->limit;
             $offset = $request->offset;
-            $user = $request->user();
 
             if (!$user) {
                 return response()->json([
@@ -49,11 +49,20 @@ class UserController extends Controller
             }
 
             $followingIds = Following::where('user_id', $user->id)
+                                        ->select('following_id')
                                         ->limit($limit)
                                         ->offset($offset)
                                         ->get()
                                         ->pluck('following_id')
                                         ->toArray();
+            
+            if (!$followingIds) {
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'all',
+                    'data' => []
+                ]);
+            }
 
             $users = User::getUserInfo($followingIds);
     
@@ -63,7 +72,7 @@ class UserController extends Controller
             ]);
         } catch (Exception $e) { 
             return response()->json([
-                'status' => 200,
+                'status' => 500,
                 'message' => $e->getMessage()
             ]);
         }
@@ -133,7 +142,7 @@ class UserController extends Controller
     {
         try {
             $user = User::where('nickname', $nickname)->first();
-            $user = User::getUserInfo($user);
+            $user = User::getUserInfo($user->id);
 
             return response()->json([
                 'status' => 200,

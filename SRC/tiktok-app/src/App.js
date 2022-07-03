@@ -14,17 +14,18 @@ import { CHECK_LOGIN } from './API'
 import { ForYou, Following, User } from './pages'
 
 // Component
-import { Toast, ScrollTopButton } from './UI'
+import { Toast, ScrollTopButton, Loading } from './UI'
 
 axios.defaults.withCredentials = true
 
 const App = () => {
     const dispatch = useDispatch()
 
+    const [isFetch, setIsFetch] = useState(false)
     const [showScrollTopButton, setShowScrollTopButton] = useState(false)
 
-
     const {toast} = useSelector(state => state.ui)
+    const {isLogin} = useSelector(state => state.auth)
 
     // Check login
     useEffect(() => {
@@ -33,10 +34,17 @@ const App = () => {
                 if (response.data.status === 200) {
                     dispatch(authSliceActions.login(response.data.user))
                 }
+
+                setIsFetch(true)
             })
             .catch(error => {
                 console.error(error)
+                setIsFetch(true)
             })
+
+        return () => {
+            setIsFetch(false)
+        }
     }, [dispatch])
 
     useEffect(() => {
@@ -54,16 +62,20 @@ const App = () => {
     }, [])
     
     return (
-        <>
-            <Routes>
-                <Route path="/" element={<ForYou />} />
-                <Route path="/for-you" element={<ForYou />} />
-                <Route path="/following" element={<Following />} />
-                <Route path="/:userId" element={<User />} />
-            </Routes>
-            <Toast show={toast.isShow} />
-            <ScrollTopButton show={showScrollTopButton} />
-        </>
+        isFetch ? (
+            <>
+                <Routes>
+                    <Route path="/" element={<ForYou />} />
+                    <Route path="/for-you" element={<ForYou />} />
+                    <Route path="/following" element={<Following />} />
+                    <Route path="/@:nickname" element={<User />} />
+                </Routes>
+                <Toast show={toast.isShow} />
+                <ScrollTopButton show={showScrollTopButton} />
+            </>
+        ) : (
+            <Loading />
+        )
     )
 }
 

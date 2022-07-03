@@ -7,7 +7,7 @@ import VideosList from './VideosList'
 import UsersList from './UsersList'
 
 // Style
-import styles from './VideosFeed.module.css'
+import styles from './index.module.css'
 
 const VideosFeed = ({ page }) => {
     const {isLogin} = useSelector(state => state.auth) 

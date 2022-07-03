@@ -1,57 +1,90 @@
 // Library
-import { useState, useEffect, memo } from 'react'
-import axios from 'axios'
+import { useEffect, memo, useRef, useState, useCallback } from 'react'
 
 // API
-import { VIDEO } from '../../../API'
+import { DELETE_COMMENT } from '../../../API'
 
 // Component
-import { Loading } from '../../../UI'
+import { Loading, Toast } from '../../../UI'
 import CommentItem from './CommentItem'
+import { DeleteCommentModal } from '../../Modal'
 
 // Style
 import styles from './CommentsList.module.css'
+import axios from 'axios'
 
-const CommentsList = ({ videoId }) => {
-    const [isFetch, setIsFetch] = useState(false)
-    const [commentsList, setCommentsList] = useState([])
+const CommentsList = ({ isFetch, commentsList, onRemoveComment }) => {
+    const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(false)
+    const [deleteCommentID, setDeleteCommentID] = useState()
+    const [toastState, setToastState] = useState({
+        show: false,
+        content: ''
+    })
 
-    // Fetch comments
-    useEffect(() => {
-        axios.post(VIDEO + '/' + videoId + '/comments', {
-            limit: 30,
-            offset: 0
-        }).then(response => {
-            if (response.data.status === 200) {
-                setIsFetch(true)
-                setCommentsList(response.data.data)
-            }
-        }).catch(error => {
-            console.log(error)
+    const containerRef = useRef()
+
+    const handleToggleDeleteCommentModal = useCallback((commentID = null) => {
+        setDeleteCommentID(commentID)
+        setShowDeleteCommentModal(state => !state)
+    }, [])
+
+    const handleToggleToast = useCallback(() => {
+        setToastState(state => ({
+            ...state,
+            show: !state.show
+        }))
+    }, [])
+
+    const handleShowToast = content => {
+        setToastState({
+            show: true,
+            content
         })
+    }
 
-        return () => {
-            setIsFetch(false)
-            setCommentsList([])
-        }
-    }, [videoId])
+    const handleDeleteComment = useCallback(() => {
+        axios(DELETE_COMMENT + '/' + deleteCommentID)
+            .then(response => {
+                const {status} = response.data
+                if (status === 200) {
+                    handleToggleDeleteCommentModal()
+                    onRemoveComment(deleteCommentID)
+                    handleShowToast('Đã xóa')
+                }
+            })
+            .catch(error => {
+                console.error(error)
+            })
+    }, [deleteCommentID, handleToggleDeleteCommentModal, onRemoveComment])
+    
+    useEffect(() => {
+        containerRef.current.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        })    
+    }, [commentsList])
 
     return (
-        <div className={styles.container}>
-            {
-                isFetch ? (
-                    commentsList.length ? (
-                        commentsList.map(comment => (
-                            <CommentItem key={comment.id} comment={comment} />
-                        ))
+        <>
+            <div ref={containerRef} className={styles.container}>
+                {
+                    isFetch ? (
+                        commentsList.length ? (
+                            commentsList.map((comment, key) => (
+                                <CommentItem key={key} item={comment} onShowDeleteCommentModal={handleToggleDeleteCommentModal} />
+                            ))
+                        ) : (
+                            <div>No comments</div>
+                        )
                     ) : (
-                        <div>No comments</div>
+                        <Loading />
                     )
-                ) : (
-                    <Loading />
-                )
-            }
-        </div>
+                }
+            </div>
+            <DeleteCommentModal show={showDeleteCommentModal} onClose={handleToggleDeleteCommentModal} onDeleteComment={handleDeleteComment} />
+            <Toast show={toastState.show} content={toastState.content} onClose={handleToggleToast} />
+        </>
     )
 }
 

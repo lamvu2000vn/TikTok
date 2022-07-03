@@ -10,8 +10,9 @@ import Video from '../Video/Video'
 // Style
 import styles from './UserCard.module.css'
 
-const UserCard = ({ user, itemIndex, playingIndex, onHover, onShowAuthModal }) => {
+const UserCard = ({ itemIndex, playingIndex, item, onHover, onShowAuthModal }) => {
     const videoRef = useRef()
+    const {video, user} = item
     
     const handleNavigateToUserPage = e => {
         e.preventDefault()
@@ -38,7 +39,7 @@ const UserCard = ({ user, itemIndex, playingIndex, onHover, onShowAuthModal }) =
     return (
         <div className={styles.container} onMouseEnter={() => onHover(itemIndex)}>
             <Link to={`/@${user.nickname}`} className={styles['a-user-card']} onClick={handleNavigateToUserPage}>
-                <Video ref={videoRef} filename={user.video.fillename} objectFit="cover" />
+                <Video ref={videoRef} filename={video.filename} objectFit="cover" />
                 <div className={styles['user-info-container']}>
                     <div className="mb-3">
                         <UserAvatar filename={user.avatar} size={48} />

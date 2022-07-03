@@ -29,6 +29,7 @@ const VideosList = ({ page }) => {
 
     const {itemsList} = useSelector(state => state.videosFeed)
     const {showVideoDetails} = useSelector(state => state.videoDetails)
+    const {isLogin} = useSelector(state => state.auth)
 
     // Handle scroll
     useEffect(() => {
@@ -76,7 +77,13 @@ const VideosList = ({ page }) => {
             }).catch(error => {
                 console.error(error)
             })
-    }, [dispatch, offset, page])
+    }, [dispatch, offset, page, isLogin])
+
+    useEffect(() => {
+        return () => {
+            dispatch(videosFeedActions.setItemsList([]))
+        }
+    }, [dispatch, isLogin])
 
     useEffect(() => {
         if (showVideoDetails === true) {

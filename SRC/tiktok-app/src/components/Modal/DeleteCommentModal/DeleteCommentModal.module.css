@@ -1,0 +1,43 @@
+.container {
+    position: relative;
+    width: 310px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.header {
+    padding: 28px 24px;
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 1px solid var(--gray-2);
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.delete-button,
+.cancel-button {
+    text-align: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-2);
+    font-size: 14px;
+}
+
+.delete-button {
+    font-weight: 700;
+}
+
+.cancel-button {
+    font-weight: 400;
+    color: var(--gray-5);
+}
+
+.body:last-child {
+    border-bottom: none;
+}
