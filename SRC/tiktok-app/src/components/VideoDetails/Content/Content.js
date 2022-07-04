@@ -14,7 +14,7 @@ import { uiSliceActions } from '../../../store/slices/uiSlice'
 import { shortenTheNumber, convertToFriendlyTime } from '../../../common/functions'
 
 // Component
-import { FollowButton, Toast } from '../../../UI'
+import { FollowButton } from '../../../UI'
 import { UserAvatar, Nickname, UserInfoWrapper } from '../../User'
 import { LikeIcon, CommentIcon } from '../../Icons'
 import CommentsList from './CommentsList'
@@ -34,8 +34,6 @@ const Content = () => {
 
     const {watchingIndex, videosList} = useSelector(state => state.videoDetails)
     const {video, user} = videosList[watchingIndex]
-
-    const {toast} = useSelector(state => state.ui)
 
     const videoUrl = `${HOST}/@${user.nickname}/video/${video.id}`
 
@@ -122,7 +120,6 @@ const Content = () => {
             </div>
             <CommentsList isFetch={isFetch} commentsList={commentsList} onRemoveComment={handleRemoveComment} />
             <BottomComment videoID={video.id} onPushCommentsList={handePushCommentsList} />
-            <Toast show={toast.isShow} />
         </div>
     )
 }

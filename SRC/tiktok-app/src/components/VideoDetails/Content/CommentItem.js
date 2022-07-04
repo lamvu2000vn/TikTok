@@ -16,7 +16,6 @@ import { FiFlag, FiTrash2 } from 'react-icons/fi'
 import styles from './CommentItem.module.css'
 
 const CommentItem = ({ item, onShowDeleteCommentModal }) => {
-
     const auth = useSelector(state => state.auth)
     const {user, comment} = item
 
@@ -43,7 +42,7 @@ const CommentItem = ({ item, onShowDeleteCommentModal }) => {
                         <BiDotsHorizontalRounded />
                         <div className={styles['comment-option-container']}>
                             {
-                                user.id === auth.user.id ? (
+                                auth.isLogin && user.id === auth.user.id ? (
                                     <div className={styles['comment-option-item']} onClick={() => onShowDeleteCommentModal(comment.id)}>
                                         <FiTrash2/>Xóa
                                     </div>

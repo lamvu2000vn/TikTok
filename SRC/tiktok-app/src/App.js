@@ -70,7 +70,7 @@ const App = () => {
                     <Route path="/following" element={<Following />} />
                     <Route path="/@:nickname" element={<User />} />
                 </Routes>
-                <Toast show={toast.isShow} />
+                <Toast />
                 <ScrollTopButton show={showScrollTopButton} />
             </>
         ) : (

@@ -2,18 +2,26 @@
 import { createPortal } from 'react-dom'
 import { useEffect, useRef } from 'react'
 import { Transition } from 'react-transition-group'
+import { useDispatch, useSelector } from 'react-redux'
+
+// Action
+import { uiSliceActions } from '../store/slices/uiSlice'
 
 // Style
 import styles from './Toast.module.css'
 
-const Toast = ({ show, content, onClose }) => {
+const Toast = () => {
+    const dispatch = useDispatch()
+
+    const {isShow, content} = useSelector(state => state.ui.toast)
+
     useEffect(() => {
-        if (show === true) {
+        if (isShow === true) {
             setTimeout(() => {
-                onClose()
+                dispatch(uiSliceActions.closeToast())
             }, 3000)
         }
-    }, [onClose, show])
+    }, [dispatch, isShow])
 
     const nodeRef = useRef()
 
@@ -43,7 +51,7 @@ const Toast = ({ show, content, onClose }) => {
     }
 
     return (
-        <Transition in={show} timeout={timeout} mountOnEnter unmountOnExit nodeRef={nodeRef}>
+        <Transition in={isShow} timeout={timeout} mountOnEnter unmountOnExit nodeRef={nodeRef}>
             {state => (
                 <div ref={nodeRef} className={styles.container} style={{...transitionStyles[state]}}>
                     <div className={styles.content}>
@@ -55,9 +63,9 @@ const Toast = ({ show, content, onClose }) => {
     )
 }
 
-const Wrapper = ({ show, content, onClose }) => {
+const Wrapper = () => {
     return createPortal(
-        <Toast show={show} content={content} onClose={onClose} />,
+        <Toast />,
         document.getElementById('toast')
     )
 }

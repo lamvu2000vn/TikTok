@@ -1,11 +1,15 @@
 // Library
 import { useEffect, memo, useRef, useState, useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+
+// Action
+import { uiSliceActions } from '../../../store/slices/uiSlice'
 
 // API
 import { DELETE_COMMENT } from '../../../API'
 
 // Component
-import { Loading, Toast } from '../../../UI'
+import { Loading } from '../../../UI'
 import CommentItem from './CommentItem'
 import { DeleteCommentModal } from '../../Modal'
 
@@ -14,12 +18,10 @@ import styles from './CommentsList.module.css'
 import axios from 'axios'
 
 const CommentsList = ({ isFetch, commentsList, onRemoveComment }) => {
+    const dispatch = useDispatch()
+
     const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(false)
     const [deleteCommentID, setDeleteCommentID] = useState()
-    const [toastState, setToastState] = useState({
-        show: false,
-        content: ''
-    })
 
     const containerRef = useRef()
 
@@ -28,20 +30,6 @@ const CommentsList = ({ isFetch, commentsList, onRemoveComment }) => {
         setShowDeleteCommentModal(state => !state)
     }, [])
 
-    const handleToggleToast = useCallback(() => {
-        setToastState(state => ({
-            ...state,
-            show: !state.show
-        }))
-    }, [])
-
-    const handleShowToast = content => {
-        setToastState({
-            show: true,
-            content
-        })
-    }
-
     const handleDeleteComment = useCallback(() => {
         axios(DELETE_COMMENT + '/' + deleteCommentID)
             .then(response => {
@@ -49,13 +37,13 @@ const CommentsList = ({ isFetch, commentsList, onRemoveComment }) => {
                 if (status === 200) {
                     handleToggleDeleteCommentModal()
                     onRemoveComment(deleteCommentID)
-                    handleShowToast('Đã xóa')
+                    dispatch(uiSliceActions.showToast('Đã xóa'))
                 }
             })
             .catch(error => {
                 console.error(error)
             })
-    }, [deleteCommentID, handleToggleDeleteCommentModal, onRemoveComment])
+    }, [deleteCommentID, dispatch, handleToggleDeleteCommentModal, onRemoveComment])
     
     useEffect(() => {
         containerRef.current.scrollTo({
@@ -83,7 +71,6 @@ const CommentsList = ({ isFetch, commentsList, onRemoveComment }) => {
                 }
             </div>
             <DeleteCommentModal show={showDeleteCommentModal} onClose={handleToggleDeleteCommentModal} onDeleteComment={handleDeleteComment} />
-            <Toast show={toastState.show} content={toastState.content} onClose={handleToggleToast} />
         </>
     )
 }
