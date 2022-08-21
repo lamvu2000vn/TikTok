@@ -171,7 +171,7 @@ const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
             </UserInfoWrapper>
             <div className={styles['content-container']}>
                 <div className={styles['info-container']}>
-                    <UserInfoWrapper user={video.user} showDescription showPopover>
+                    <UserInfoWrapper user={user} showDescription showPopover>
                         <Link to={`/@${user.nickname}`} className={styles['author-container']}>
                             <div className={styles['auth-link']}>
                                 <span className={styles['author-user-id']}>{user.nickname}</span>
