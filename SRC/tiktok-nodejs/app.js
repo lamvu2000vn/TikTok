@@ -4,12 +4,21 @@ import express from 'express'
 import { config } from './config'
 // Routes
 import { routes } from './routes'
+// Util
+import { associations, sequelize } from './util'
 
 (async () => {
-    const app = express()
+    try {
+        const app = express()
+    
+        config(app)
+        routes(app)
 
-    config(app)
-    routes(app)
+        await associations()
+        await sequelize.sync()
 
-    app.listen(3000)
+        app.listen(8000)
+    } catch (error) {
+        console.log(error)
+    }
 })()

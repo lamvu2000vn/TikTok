@@ -1,14 +1,14 @@
 // Library
 import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import axios from 'axios'
 
 // Action
 import { authSliceActions } from './store/slices/authSlice'
 
 // API
-import { CHECK_LOGIN } from './API'
+import { CHECK_LOGIN, CSRF_TOKEN } from './API'
 
 // Page
 import { ForYou, Following, User } from './pages'
@@ -16,22 +16,33 @@ import { ForYou, Following, User } from './pages'
 // Component
 import { Toast, ScrollTopButton, Loading } from './UI'
 
-axios.defaults.withCredentials = true
-
 const App = () => {
     const dispatch = useDispatch()
 
     const [isFetch, setIsFetch] = useState(false)
     const [showScrollTopButton, setShowScrollTopButton] = useState(false)
 
-    const {toast} = useSelector(state => state.ui)
-    const {isLogin} = useSelector(state => state.auth)
+    // const {toast} = useSelector(state => state.ui)
+    // const {isLogin} = useSelector(state => state.auth)
+    console.log(sessionStorage.getItem('token'))
 
-    // Check login
+    // Check login & get CSRF token
     useEffect(() => {
-        axios(CHECK_LOGIN)
+        const jwt = localStorage.getItem('jwt')
+        const fetchCSRFToken = axios(CSRF_TOKEN, { withCredentials: true })
+        const fetchCheckLogin = axios(CHECK_LOGIN, { headers: { 'token':  jwt} })
+
+        Promise.all([fetchCSRFToken, fetchCheckLogin])
             .then(response => {
-                if (response.data.status === 200) {
+                const csrfRes = response[0]
+                const checkLoginRes = response[1]
+
+                if (csrfRes.data.status === 200) {
+                    axios.defaults.headers.common['x-csrf-token'] = csrfRes.data.token
+                    axios.defaults.withCredentials = true
+                }
+
+                if (checkLoginRes.data.status === 200) {
                     dispatch(authSliceActions.login(response.data.user))
                 }
 

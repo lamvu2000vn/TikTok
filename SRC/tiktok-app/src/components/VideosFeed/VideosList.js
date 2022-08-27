@@ -63,9 +63,8 @@ const VideosList = ({ page }) => {
             offset
         })
             .then(response => {
-                if (response.data.status === 200) {
-                    const {data} = response.data
-
+                const {status, data} = response.data
+                if (status === 200) {
                     if (data.length > 0) {
                         dispatch(videosFeedActions.pushItemsList(data))
                     } else {

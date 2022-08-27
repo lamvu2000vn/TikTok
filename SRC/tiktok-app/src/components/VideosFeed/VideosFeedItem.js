@@ -159,10 +159,10 @@ const VideosFeedItem = ({ item, itemIndex, scrollY }) => {
 
     // Active like button
     useEffect(() => {
-        if (video.is_liked) {
+        if (video.is_liked && isLogin) {
             likeButtonRef.current.style.color = 'rgb(254, 44, 85)'
         }
-    }, [video.is_liked])
+    }, [isLogin, video.is_liked])
 
     return (
         <div className={styles.container}>

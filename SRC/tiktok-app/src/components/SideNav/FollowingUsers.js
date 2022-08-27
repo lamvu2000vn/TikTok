@@ -36,9 +36,18 @@ const FolllowingUsers = () => {
 
     // Fetch data
     useEffect(() => {
-        axios.post(FOLLOWING_USERS, {
-            limit: LIMIT,
-            offset: number - LIMIT
+        const jwt = localStorage.getItem('jwt')
+
+        axios({
+            url: FOLLOWING_USERS,
+            method: 'POST',
+            data: {
+                limit: LIMIT,
+                offset: number - LIMIT
+            },
+            headers: {
+                token: jwt
+            }
         }).then(response => {
             const {status, data} = response.data
             if (status === 200) {

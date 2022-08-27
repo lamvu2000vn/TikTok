@@ -49,7 +49,7 @@
     right: 0;
     top: 0;
     width: 100%;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     font-size: 22px;
@@ -74,6 +74,11 @@
     min-width: 200px;
     font-size: 16px;
     font-weight: 700;
+    display: none
+}
+
+.option-button:hover .comment-option-container {
+    display: block;
 }
 
 .comment-option-container::after {

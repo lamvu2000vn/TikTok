@@ -1,0 +1,5 @@
+export * as apiController from './apiController'
+export * as authController from './authController'
+export * as videoController from './videoController'
+export * as userController from './UserController'
+export * as commentController from './commentController'

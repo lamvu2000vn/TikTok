@@ -12,7 +12,7 @@ import { authSliceActions } from '../../../../store/slices/authSlice'
 import { uiSliceActions } from '../../../../store/slices/uiSlice'
 
 // API
-import { LOGIN, CSRF_TOKEN } from '../../../../API'
+import { LOGIN } from '../../../../API'
 
 // Component
 import { PhoneInput, PasswordInput, VerifyCodeInput, InvalidText } from '../../../Form/Input'
@@ -70,32 +70,29 @@ const DefaultLogin = () => {
             setIsCheckingLogin(true)
             setInvalidText('')
 
-            axios(CSRF_TOKEN)
-                .then(() => {
-                    axios.post(LOGIN, {
-                        phone: phoneState.value,
-                        password
-                    }).then(response => {
-                        setIsCheckingLogin(false)
-        
-                        if (response.data.status === 200) {
-                            const data = response.data.data
-                            
-                            authCtx.handleCloseModal()
-                            setTimeout(() => {
-                                dispatch(authSliceActions.login(data))
-                                dispatch(uiSliceActions.showToast('Đăng nhập thành công'))
-                                navigate("/", { replace: true })
-                            }, 300)
-                        } else if (response.data.status === 401) {
-                            setInvalidText('Số điện thoại hoặc mật khẩu không chính xác')
-                        }
-                    })
-                })
-                .catch(error => {
-                    setInvalidText('Đã có lỗi xảy ra. Vui lòng thử lại')
-                    console.error(error)
-                })
+            axios.post(LOGIN, {
+                phone: phoneState.value,
+                password
+            }).then(response => {
+                const {status, user} = response.data
+                setIsCheckingLogin(false)
+
+                if (status === 200) {
+                    authCtx.handleCloseModal()
+                    setTimeout(() => {
+                        localStorage.setItem('jwt', user.remember_token)
+                        dispatch(authSliceActions.login(user))
+                        dispatch(uiSliceActions.showToast('Đăng nhập thành công'))
+                        navigate("/", { replace: true })
+                    }, 300)
+                } else if (status === 401) {
+                    setInvalidText('Số điện thoại hoặc mật khẩu không chính xác')
+                }
+            })
+            .catch(error => {
+                setInvalidText('Đã có lỗi xảy ra. Vui lòng thử lại')
+                console.error(error)
+            })
         }
     }
 
