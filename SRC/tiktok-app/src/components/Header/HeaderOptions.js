@@ -66,17 +66,21 @@ const HeaderOptions = ({ show }) => {
         setShowShortcutModal(prevState => !prevState)
     }
 
-    const handleLogout = () => {
-        axios(LOGOUT)
-            .then(response => {
-                if (response.data.status === 200) {
-                    dispatch(authSliceActions.loggout())
-                    dispatch(uiSliceActions.showToast('Đã đăng xuất'))
-                }
+    const handleLogout = async () => {
+        try {
+            const jwt = localStorage.getItem('jwt')
+            const response = await axios(LOGOUT, {
+                headers: { jwt }
             })
-            .catch(error => {
-                console.error(error)
-            })
+            const {status} = response.data
+            
+            if (status === 200) {
+                dispatch(authSliceActions.loggout())
+                dispatch(uiSliceActions.showToast('Đã đăng xuất'))
+            }
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return (

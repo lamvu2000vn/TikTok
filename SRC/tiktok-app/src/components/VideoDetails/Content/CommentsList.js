@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux'
 import { uiSliceActions } from '../../../store/slices/uiSlice'
 
 // API
-import { DELETE_COMMENT } from '../../../API'
+import { COMMENT } from '../../../API'
 
 // Component
 import { Loading } from '../../../UI'
@@ -31,18 +31,26 @@ const CommentsList = ({ isFetch, commentsList, onRemoveComment }) => {
     }, [])
 
     const handleDeleteComment = useCallback(() => {
-        axios(DELETE_COMMENT + '/' + deleteCommentID)
-            .then(response => {
+        (async () => {
+            try {
+                const jwt = localStorage.getItem('jwt')
+                const response = await axios({
+                    url: COMMENT + '/' + deleteCommentID,
+                    method: 'DELETE',
+                    headers: { jwt }
+                })
+    
                 const {status} = response.data
+    
                 if (status === 200) {
                     handleToggleDeleteCommentModal()
                     onRemoveComment(deleteCommentID)
                     dispatch(uiSliceActions.showToast('Đã xóa'))
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error(error)
-            })
+            }
+        })()
     }, [deleteCommentID, dispatch, handleToggleDeleteCommentModal, onRemoveComment])
     
     useEffect(() => {

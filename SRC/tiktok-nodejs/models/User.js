@@ -201,7 +201,7 @@ User.init({
         defaultValue: 1
     },
     remember_token: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.TEXT,
         allowNull: true
     }
 }, {

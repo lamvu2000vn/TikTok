@@ -23,21 +23,26 @@ const FollowButton = ({ user, outline = true }) => {
 
     const {isLogin} = useSelector(state => state.auth)
 
-    const handleFolowUser = () => {
+    const handleFolowUser = async () => {
         if (isLogin) {
-            axios(FOLLOW_USER + '/' + user.id)
-                .then(response => {
-                    const {status} = response.data
+            try {
+                const jwt = localStorage.getItem('jwt')
+                const response = await axios({
+                    url: FOLLOW_USER + '/' + user.id, user,
+                    method: 'GET',
+                    headers: { jwt }
+                })
+                
+                const {status} = response.data
 
-                    if (status === 200) {
-                        setChangeToFollowing(true)
-                        dispatch(videosFeedActions.followUser(user))
-                        dispatch(sidebarSliceActions.followUser(user))
-                    }
-                })
-                .catch(error => {
-                    console.error(error)
-                })
+                if (status === 200) {
+                    setChangeToFollowing(true)
+                    dispatch(videosFeedActions.followUser(user))
+                    dispatch(sidebarSliceActions.followUser(user))
+                }
+            } catch (error) {
+                console.error(error)
+            }
         } else {
             setShowAuthModal(true)
         }

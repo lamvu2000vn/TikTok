@@ -56,11 +56,17 @@ const VideosList = ({ page }) => {
 
     // fetch videos
     useEffect(() => {
+        const jwt = localStorage.getItem('jwt')
         const url = page === 'for-you' ? FOR_YOU_PAGE : FOLLOWING_PAGE
 
-        axios.post(url, {
-            limit: LIMIT,
-            offset
+        axios({
+            url,
+            method: 'POST',
+            headers: { jwt },
+            data: {
+                limit: LIMIT,
+                offset
+            }
         })
             .then(response => {
                 const {status, data} = response.data

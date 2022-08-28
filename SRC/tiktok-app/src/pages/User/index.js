@@ -21,19 +21,30 @@ const UserPage = () => {
     const {nickname} = useParams()
 
     useEffect(() => {
-        axios.post(USER + '/' + nickname + '/videos', {
-            limit: 30,
-            offset: 0
-        })
-            .then(response => {
+        (async () => {
+            const jwt = localStorage.getItem('jwt')
+            const url = `${USER}/${nickname}/videos`
+
+            try {
+                const response = await axios({
+                    url,
+                    method: 'POST',
+                    headers: { jwt },
+                    data: {
+                        limit: 30,
+                        offset: 0
+                    }
+                })
+                
                 const {status, data} = response.data
+    
                 if (status === 200) {
                     setItemsList(data)
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error(error)
-            })
+            }
+        })()
 
         return () => {
             setItemsList(null)

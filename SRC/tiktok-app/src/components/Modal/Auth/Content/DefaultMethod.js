@@ -74,13 +74,13 @@ const DefaultLogin = () => {
                 phone: phoneState.value,
                 password
             }).then(response => {
-                const {status, user} = response.data
+                const {status, user, token} = response.data
                 setIsCheckingLogin(false)
 
                 if (status === 200) {
                     authCtx.handleCloseModal()
                     setTimeout(() => {
-                        localStorage.setItem('jwt', user.remember_token)
+                        localStorage.setItem('jwt', token)
                         dispatch(authSliceActions.login(user))
                         dispatch(uiSliceActions.showToast('Đăng nhập thành công'))
                         navigate("/", { replace: true })

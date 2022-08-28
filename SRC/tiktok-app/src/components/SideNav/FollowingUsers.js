@@ -46,7 +46,7 @@ const FolllowingUsers = () => {
                 offset: number - LIMIT
             },
             headers: {
-                token: jwt
+                jwt
             }
         }).then(response => {
             const {status, data} = response.data

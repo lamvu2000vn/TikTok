@@ -31,16 +31,26 @@ const BottomComment = ({ videoID, onPushCommentsList }) => {
     }, [])
     
     const handleSubmitComment = useCallback(() => {
-        if (enableSubmit) {
-            setHiddenValue('')
-            setCommentValue('')
-
-            axios.post(SUBMIT_COMMENT, {
-                content: commentValue,
-                videoID,
-            })
-                .then(response => {
+        (async () => {
+            if (enableSubmit) {
+                setHiddenValue('')
+                setCommentValue('')
+    
+                const jwt = localStorage.getItem('jwt')
+    
+                try {
+                    const response = await axios({
+                        url: SUBMIT_COMMENT,
+                        method: 'POST',
+                        headers: { jwt },
+                        data: {
+                            content: commentValue,
+                            videoID,
+                        },
+                    })
+        
                     const {status, data} = response.data
+        
                     if (status === 200) {
                         const comment = {
                             user,
@@ -50,13 +60,14 @@ const BottomComment = ({ videoID, onPushCommentsList }) => {
                                 replies: 0
                             }
                         }
+    
                         onPushCommentsList(comment)
                     }
-                })
-                .catch(error => {
+                } catch (error) {
                     console.error(error)
-                })
-        }
+                }
+            }
+        })()
     }, [commentValue, enableSubmit, onPushCommentsList, user, videoID])
 
     const handleChangeCommentValue = e => {

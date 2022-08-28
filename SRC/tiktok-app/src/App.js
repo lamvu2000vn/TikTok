@@ -24,13 +24,12 @@ const App = () => {
 
     // const {toast} = useSelector(state => state.ui)
     // const {isLogin} = useSelector(state => state.auth)
-    console.log(sessionStorage.getItem('token'))
 
     // Check login & get CSRF token
     useEffect(() => {
         const jwt = localStorage.getItem('jwt')
         const fetchCSRFToken = axios(CSRF_TOKEN, { withCredentials: true })
-        const fetchCheckLogin = axios(CHECK_LOGIN, { headers: { 'token':  jwt} })
+        const fetchCheckLogin = axios(CHECK_LOGIN, { headers: { jwt } })
 
         Promise.all([fetchCSRFToken, fetchCheckLogin])
             .then(response => {
@@ -43,7 +42,7 @@ const App = () => {
                 }
 
                 if (checkLoginRes.data.status === 200) {
-                    dispatch(authSliceActions.login(response.data.user))
+                    dispatch(authSliceActions.login(checkLoginRes.data.user))
                 }
 
                 setIsFetch(true)

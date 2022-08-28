@@ -1,5 +1,5 @@
 // Lib
-import { QueryTypes} from 'sequelize'
+import { QueryTypes, Op } from 'sequelize'
 import fs from 'fs'
 import appRoot from 'app-root-path'
 import jwt from 'jsonwebtoken'
@@ -91,24 +91,31 @@ export const streamVideo = (req, res, next) => {
 export const videoForYou = async (req, res, next) => {
     try {
         const {limit, offset} = req.body
-        const authID = req.session.user ? req.session.user.id : 0
+        const token = req.headers.jwt
 
-        let videoIds = await Video.findAll({
-            attributes: ['id'],
-            limit,
-            offset
+        jwt.verify(token, 'secretKey', async (err, decoded) => {
+            let authID = 0
+
+            if (!err) {
+                authID = decoded.user_id
+            }
+            
+            let videoIds = await Video.findAll({
+                attributes: ['id'],
+                limit,
+                offset
+            })
+    
+            videoIds = videoIds.map(val => val.id)
+    
+            const videos = await Video.getVideo(videoIds, authID)
+            
+            return res.status(200).json({
+                status: 200,
+                message: 'success',
+                data: videos
+            })
         })
-
-        videoIds = videoIds.map(val => val.id)
-
-        const videos = await Video.getVideo(videoIds, authID)
-        
-        return res.status(200).json({
-            status: 200,
-            message: 'success',
-            data: videos
-        })
-
     } catch (error) {
         console.log(error)
         res.status(500).json({ error })
@@ -117,9 +124,8 @@ export const videoForYou = async (req, res, next) => {
 
 export const videoFollowing = async (req, res, next) => {
     try {
-        const token = req.headers.token
+        const token = req.headers.jwt
         let videos = []
-        let auth = null
 
         if (!token) {
             let videoIds = await sequelize.query(`
@@ -146,7 +152,7 @@ export const videoFollowing = async (req, res, next) => {
             })
         }
 
-        jwt.verify(token, 'PRIVATE KEY', (err, decoded) => {
+        jwt.verify(token, 'secretKey', async (err, decoded) => {
             if (err) {
                 return res.status(200).json({
                     status: 400,
@@ -154,47 +160,47 @@ export const videoFollowing = async (req, res, next) => {
                 })
             }
 
-            auth = decoded.user
-        })
-
-        const {limit, offset} = req.body
-
-        let followingIds = await Following.findAll({
-            attributes: ['following_id'],
-            where: {
-                user_id: auth.id
-            }
-        })
-        followingIds = followingIds.map(val => val.id)
-
-
-        if (followingIds.length) {
-            let videoIds = await Video.findAll({
-                attributes: ['id'],
-                where: {
-                    user_id: {
-                        [Op.in]: followingIds
-                    }
-                },
-                limit,
-                offset
-            })
-            videoIds = videoIds.map(val => val.id)
+            const authID = decoded.user_id
+            const {limit, offset} = req.body
     
-            if (!videoIds.length) {
-                return res.status(200).json({
-                    status: 200,
-                    message: 'all',
-                    data: []
+            let followingIds = await Following.findAll({
+                attributes: ['following_id'],
+                where: {
+                    user_id: authID
+                }
+            })
+            followingIds = followingIds.map(val => val.following_id)
+    
+            if (followingIds.length) {
+                let videoIds = await Video.findAll({
+                    attributes: ['id'],
+                    where: {
+                        user_id: {
+                            [Op.in]: followingIds
+                        }
+                    },
+                    limit,
+                    offset
                 })
+                videoIds = videoIds.map(val => val.id)
+        
+                if (!videoIds.length) {
+                    return res.status(200).json({
+                        status: 200,
+                        message: 'all',
+                        data: []
+                    })
+                }
+    
+                videos = await Video.getVideo(videoIds, authID)
             }
-
-            videos = await Video.getVideo(videoIds, auth.id)
-        }
-
-        return res.status(200).json({
-            data: videos
+            
+            return res.status(200).json({
+                status: 200,
+                data: videos
+            })
         })
+
     } catch (error) {
         console.log(error)
         res.status(500).json({ error })

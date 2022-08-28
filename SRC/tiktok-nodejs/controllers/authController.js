@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 // Model
 import { User } from '../models'
 
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
     try {
         const {phone, password} = req.body
     
@@ -25,16 +25,24 @@ export const login = async (req, res, next) => {
             })
         }
 
-        const token = jwt.sign({ user }, 'PRIVATE KEY')
-        user.remember_token = token
-        await user.save()
+        jwt.sign({ user_id: user.id, phone: user.phone, nickname: user.nickname, name: user.name }, 'secretKey', async (err, token) => {
+            if (err) {
+                return res.status(500).json({ err })
+            }
 
-        user = await User.getUserInfo(user.id, user.id)
+            user.remember_token = token
+            await user.save()
     
-        res.status(200).json({
-            status: 200,
-            message: 'Authenticated',
-            user
+            user = await User.getUserInfo(user.id, user.id)
+
+            req.session.user = user
+        
+            res.status(200).json({
+                status: 200,
+                message: 'Authenticated',
+                token,
+                user
+            })
         })
     } catch (error) {
         console.log(error)
@@ -44,17 +52,18 @@ export const login = async (req, res, next) => {
     }
 }
 
-export const logout = (req, res, next) => {
+export const logout = (req, res) => {
     try {
-        req.session.destroy((err) => {
+        const token = req.headers.jwt
+        jwt.verify(token, 'secretKey', (err, decoded) => {
             if (err) {
-                console.log(err)
-            } else {
-                return res.status(200).json({
-                    status: 200,
-                    message: 'logout successful'
-                })
+                return res.status(400).json({ err })
             }
+
+            return res.status(200).json({
+                status: 200,
+                message: 'Logout successful'
+            })
         })
     } catch (error) {
         console.log(error)
@@ -66,15 +75,16 @@ export const logout = (req, res, next) => {
 
 export const checkLogin = async (req, res) => {
     try {
-        const token = req.headers.token
+        const token = req.headers.jwt
 
         if (!token) {
-            return res.status(400).json({
+            return res.status(200).json({
+                status: 401,
                 message: 'Require token'
             })
         }
 
-        jwt.verify(token, 'PRIVATE KEY', (err, decoded) => {
+        jwt.verify(token, 'secretKey', async (err, decoded) => {
             if (err) {
                 return res.status(200).json({
                     status: 401,
@@ -82,10 +92,12 @@ export const checkLogin = async (req, res) => {
                 })
             }
 
+            const user = await User.getUserInfo(decoded.user_id, decoded.user_id)
+
             return res.status(200).json({
                 status: 200,
                 message: 'Authenticated',
-                user: decoded
+                user
             })
         })
     } catch (error) {

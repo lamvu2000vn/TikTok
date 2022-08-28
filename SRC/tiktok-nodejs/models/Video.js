@@ -28,8 +28,8 @@ class Video extends Model {
                             WHERE videos.user_id = users.id
                         )
                     ) AS user_likes,
-                    (SELECT COUNT(*) FROM followings WHERE followings.user_id = $authID AND followings.following_id = videos.user_id) AS is_following,
-                    (SELECT COUNT(*) FROM video_likes WHERE video_likes.user_id = $authID AND video_likes.video_id = videos.id) AS is_liked
+                    (SELECT COUNT(*) FROM followings WHERE followings.user_id = ${authID} AND followings.following_id = videos.user_id) AS is_following,
+                    (SELECT COUNT(*) FROM video_likes WHERE video_likes.user_id = ${authID} AND video_likes.video_id = videos.id) AS is_liked
                 FROM videos
                 LEFT JOIN users ON videos.user_id = users.id
             `
@@ -54,10 +54,7 @@ class Video extends Model {
             query += whereClauses
     
             const results = await sequelize.query(query, {
-                type: QueryTypes.SELECT,
-                bind: {
-                    authID
-                }
+                type: QueryTypes.SELECT
             })
 
             let videos = []

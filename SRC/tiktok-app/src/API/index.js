@@ -31,4 +31,3 @@ export const FOLLOW_USER = USER + '/follow-user'
 
 // Comment
 export const SUBMIT_COMMENT = COMMENT  + '/submit'
-export const DELETE_COMMENT = COMMENT + '/delete'

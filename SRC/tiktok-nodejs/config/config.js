@@ -10,8 +10,8 @@ const config = app => {
     // CORS
     app.use(cors({
         origin: 'http://localhost:3000',
-        methods: '*',
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-TOKEN', 'X-XSRF-TOKEN', 'token'],
+        methods: 'GET, POST, PUT, PATH, DELETE, OPTIONS',
+        allowedHeaders: ['Content-Type', 'jwt', 'x-csrf-token'],
         credentials: true
     }))
     

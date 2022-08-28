@@ -15,6 +15,7 @@ const authSlice = createSlice({
             state.user = action.payload
         },
         loggout(state) {
+            localStorage.removeItem('jwt')
             state.isLogin = false
             state.user = null
         }

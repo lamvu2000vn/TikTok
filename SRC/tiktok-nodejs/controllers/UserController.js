@@ -82,10 +82,9 @@ export const getRecommendedUsers = async (req, res) => {
 
 export const getFollowingUsers = async (req, res) => {
     try {
-        const token = req.headers.token
+        const token = req.headers.jwt
 
         const {limit, offset} = req.body
-        let authID = null
 
         if (!token) {
             return res.status(401).json({
@@ -94,7 +93,7 @@ export const getFollowingUsers = async (req, res) => {
             })
         }
 
-        jwt.verify(token, 'PRIVATE KEY', (err, decoded) => {
+        jwt.verify(token, 'secretKey', async (err, decoded) => {
             if (err) {
                 return res.status(200).json({
                     status: 400,
@@ -102,36 +101,33 @@ export const getFollowingUsers = async (req, res) => {
                 })
             }
 
-            authID = decoded.user.id
-        })
-
-        const auth = await User.getUserInfo(authID, authID)
-        
-        let followingIds = await Following.findAll({
-            attributes: ['following_id'],
-            where: {
-                user_id: auth.id
-            },
-            limit,
-            offset
-        })
-        followingIds = followingIds.map(val => val.following_id)
-        
-        if (!followingIds.length) {
+            const authID = decoded.user_id
+            
+            let followingIds = await Following.findAll({
+                attributes: ['following_id'],
+                where: {
+                    user_id: authID
+                },
+                limit,
+                offset
+            })
+            followingIds = followingIds.map(val => val.following_id)
+            
+            if (!followingIds.length) {
+                return res.status(200).json({
+                    status: 200,
+                    message: 'all',
+                    data: []
+                })
+            }
+            
+            const users = await User.getUserInfo(followingIds, authID)
+            
             return res.status(200).json({
                 status: 200,
-                message: 'all',
-                data: []
+                data: users
             })
-        }
-        
-        const users = await User.getUserInfo(followingIds, auth.id)
-        
-        return res.status(200).json({
-            status: 200,
-            data: users
         })
-
     } catch (error) {
         console.log(error)
         return res.status(500).json({ error })
@@ -140,40 +136,47 @@ export const getFollowingUsers = async (req, res) => {
 
 export const followUser = async (req, res) => {
     try {
-        const auth = req.session.user
+        const token = req.headers.jwt
         const userID = req.params.userID
 
-        if (!auth) {
+        if (!token) {
             return res.status(401).json({
                 status: 401,
                 message: 'Unauthenticated'
             })
         }
 
-        let action = null
-        const [record, isCreated] = await Following.findOrCreate({
-            where: {
-                user_id: auth.id,
-                following_id: userID
+        jwt.verify(token, 'secretKey', async (err, decoded) => {
+            if (err) {
+                return res.status(400).json({ err })
             }
-        })
 
-        if (isCreated) {
-            action = 'follow'
-        } else {
-            action = 'unfollow'
-            await Following.destroy({
+            const authID = decoded.user_id
+            let action = null
+            const [record, isCreated] = await Following.findOrCreate({
                 where: {
-                    user_id: record.id,
-                    following_id: record.following_id
+                    user_id: authID,
+                    following_id: userID
                 }
             })
-        }
-
-        return res.status(200).json({
-            status: 200,
-            action
+            
+            if (isCreated) {
+                action = 'follow'
+            } else {
+                action = 'unfollow'
+                await Following.destroy({
+                    where: {
+                        id: record.id
+                    }
+                })
+            }
+    
+            return res.status(200).json({
+                status: 200,
+                action
+            })
         })
+
     } catch (error) {
         console.log(error)
         res.status(500).json({ error })
