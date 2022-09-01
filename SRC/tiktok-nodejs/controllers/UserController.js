@@ -13,26 +13,41 @@ export const getOtherInfomation = async (req, res) => {
     }
 }
 
-export const getUserByNickname = async (req, res) => {
+export const getUserById = async (req, res) => {
     try {
-        const user = await User.findOne({
-            where: {
-                nickname: req.params.nickname
-            }
-        })
-        const authID = req.session.user ? req.session.user.id : 0
+        const token = req.headers.jwt
+        const userIdentify = req.params.userIdentify
+        const where = {}
 
+        if (typeof userIdentify === 'number') {
+            where.id = userIdentify
+        } else {
+            where.nickname = userIdentify
+        }
+
+        let user = await User.findOne(where)
+        
         if (!user) {
             return res.status(400).json({
-                message: 'Nickname not found'
+                message: 'User not found'
             })
         }
 
-        const users = await User.getUserInfo(user.id, authID)
+        jwt.verify(token, 'secretKey', async (err, decoded) => {
+            let authID = 0
 
-        res.status(200).json({
-            data: users
+            if (!err) {
+                authID = decoded.user_id
+            }
+
+            user = await User.getUserInfo(user.id, authID)
+    
+            res.status(200).json({
+                status: 200,
+                user
+            })
         })
+
     } catch (error) {
         console.log(error)
         res.status(500).json({ error })

@@ -23,17 +23,21 @@ const FollowingButton = ({ user, outline }) => {
 
     const [changeToFollow, setChangeToFollow] = useState(false)
 
-    const handleUnfolloweUser = () => {
-        axios(FOLLOW_USER + '/' + user.id)
-            .then(response => {
-                const {status} = response.data
+    const handleUnfolloweUser = async () => {
+        try {
+            const jwt = localStorage.getItem('jwt')
+            const response = await axios(FOLLOW_USER + '/' + user.id, { headers: { jwt }})
 
-                if (status === 200) {
-                    setChangeToFollow(true)
-                    dispatch(videosFeedActions.followUser(user))
-                    dispatch(sidebarSliceActions.followUser(user))
-                }
-            })
+            const {status} = response.data
+            
+            if (status === 200) {
+                setChangeToFollow(true)
+                dispatch(videosFeedActions.followUser(user))
+                dispatch(sidebarSliceActions.followUser(user))
+            }
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     return (

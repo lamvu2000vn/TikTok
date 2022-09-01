@@ -79,12 +79,12 @@ const Content = () => {
         <div className={styles.container}>
             <div className={styles['info-container']}>
                 <div className="mr-3">
-                    <UserInfoWrapper user={user} showDescription showPopover>
+                    <UserInfoWrapper userId={user.id} showDescription showPopover>
                         <UserAvatar filename={user.avatar} nickname={user.nickname} />
                     </UserInfoWrapper>
                 </div>
                 <div className="flex flex-auto mr-3">
-                    <UserInfoWrapper user={user} showDescription showPopover>
+                    <UserInfoWrapper userId={user.id} showDescription showPopover>
                         <Nickname nickname={user.nickname} verified={user.verified} link />
                         <div className={styles['orther-info-container']}>
                             <Link to={`/@${user.nickname}`}>{user.name}</Link>

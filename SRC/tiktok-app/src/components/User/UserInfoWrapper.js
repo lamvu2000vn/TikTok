@@ -1,25 +1,40 @@
 // Library
 import { useState } from 'react'
+import axios from 'axios'
+
+// API
+import { USER } from '../../API'
 
 // Component
 import UserInfoPopover from './UserInfoPopover'
 
 let timerId = null
 
-const UserInfoWrapper = ({ children, user, showDescription, showPopover }) => {
+const UserInfoWrapper = ({ children, userId, showDescription, showPopover }) => {
     const [showUserPopover, setShowUserPopover] = useState(false)
-
-    const handleShowPopover = e => {
-        clearTimeout(timerId)
-
-        timerId = setTimeout(() => {
-            setShowUserPopover(true)
-        }, 500)
+    const [user, setUser] = useState(null)
+    
+    const handleShowPopover = () => {
+        try {
+            timerId = setTimeout(async () => {
+                const jwt = localStorage.getItem('jwt')
+                
+                const response = await axios(USER + '/' + userId, { headers: { jwt } })
+    
+                const {status, user} = response.data
+    
+                if (status === 200) {
+                    setUser(user)
+                    setShowUserPopover(true)
+                }
+            }, 500)
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     const handleHidePopover = () => {
         clearTimeout(timerId)
-
         setShowUserPopover(false)
     }
 

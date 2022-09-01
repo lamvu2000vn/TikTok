@@ -23,7 +23,7 @@ const sidebarSlice = createSlice({
 
             state.recommendedUsers = state.recommendedUsers.filter(item => {
                 if (item.id === user.id) {
-                    item.isFollowing = !item.isFollowing
+                    item.is_following === 1 ? item.is_following = 0 : item.is_following = 1
                 }
 
                 return true

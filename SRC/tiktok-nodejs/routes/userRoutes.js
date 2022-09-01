@@ -10,6 +10,6 @@ route.get('/recommended-users', userController.getRecommendedUsers)
 route.post('/following-users', userController.getFollowingUsers)
 route.post('/:userIdentify/videos', userController.getVideosOfUser)
 route.get('/follow-user/:userID', userController.followUser)
-route.get('/:nickname', userController.getUserByNickname)
+route.get('/:userIdentify', userController.getUserById)
 
 export default route

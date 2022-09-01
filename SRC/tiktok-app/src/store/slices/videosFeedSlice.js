@@ -55,7 +55,7 @@ const videosFeedSlice = createSlice({
 
             state.itemsList = state.itemsList.filter(item => {
                 if (item.user.id === user.id) {
-                    item.user.isFollowing = !item.user.isFollowing
+                    item.user.is_following === 1 ? item.user.is_following = 0 : item.user.is_following = 1
                 }
 
                 return true

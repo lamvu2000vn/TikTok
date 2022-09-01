@@ -9,7 +9,7 @@ import styles from './UserLink.module.css'
 
 const UserLink = ({ user, showPopover }) => {       
     return (
-        <UserInfoWrapper user={user} showPopover={showPopover}>
+        <UserInfoWrapper userId={user.id} showPopover={showPopover}>
             <Link to={`/@${user.nickname}`} className={styles['user-link-wrapper']}>
                 <UserAvatar filename={user.avatar} size={32} />
                 <div className={styles['user-info-wrapper']}>

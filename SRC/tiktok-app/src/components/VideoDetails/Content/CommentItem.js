@@ -23,12 +23,12 @@ const CommentItem = ({ item, onShowDeleteCommentModal }) => {
         <div className={styles.container}>
             <div className={styles['comment-content-container']}>
                 <div className="mr-3">
-                    <UserInfoWrapper user={user} showPopover showDescription>
+                    <UserInfoWrapper userId={user.id} showPopover showDescription>
                         <UserAvatar filename={user.avatar} nickname={user.nickname} />
                     </UserInfoWrapper>
                 </div>
                 <div className="flex-auto">
-                    <UserInfoWrapper user={user} showPopover showDescription>
+                    <UserInfoWrapper userId={user.id} showPopover showDescription>
                         <Nickname nickname={user.nickname} verified={user.verified} link />
                     </UserInfoWrapper>
                     <div className={styles['comment-text']}>{comment.content}</div>
